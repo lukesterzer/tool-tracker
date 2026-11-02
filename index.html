@@ -1,0 +1,2171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tool Tracker</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwLjEiIHkxPSIwIiB4Mj0iMC45IiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjQTNFNjM1Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNUU4RjBFIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMTYiIHk9IjE2IiB3aWR0aD0iNDgwIiBoZWlnaHQ9IjQ4MCIgcng9IjExNiIgZmlsbD0idXJsKCNnKSIvPjxwYXRoIGQ9Ik0xMyAyIDQgMTMuNWg2TDkuNiAyMiAyMCA5LjVoLTYuNEwxMyAyWiIgZmlsbD0iIzBFMTQwMyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNjQsNjQpIHNjYWxlKDE2KSIvPjwvc3ZnPg==">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwLjEiIHkxPSIwIiB4Mj0iMC45IiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjQTNFNjM1Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNUU4RjBFIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMTYiIHk9IjE2IiB3aWR0aD0iNDgwIiBoZWlnaHQ9IjQ4MCIgcng9IjExNiIgZmlsbD0idXJsKCNnKSIvPjxwYXRoIGQ9Ik0xMyAyIDQgMTMuNWg2TDkuNiAyMiAyMCA5LjVoLTYuNEwxMyAyWiIgZmlsbD0iIzBFMTQwMyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNjQsNjQpIHNjYWxlKDE2KSIvPjwvc3ZnPg==">
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('gw-theme')||'dark');}catch(e){}</script>
+<style>
+/* ============================================================
+   THEME — change these VALUES freely to re-theme.
+   Names are referenced by the app JS; keep the names.
+   ============================================================ */
+:root{
+  color-scheme: dark;
+  /* core surfaces */
+  --bg:        #100F0D;
+  --surface:   #1A1816;   /* card */
+  --gw-black:  #0B0A09;   /* deepest (header bar / wells) */
+
+  /* added neutrals (extra hooks, safe to keep) */
+  --surface-2: #232120;   /* raised / inputs */
+  --surface-3: #2E2B29;   /* hover / active well */
+  --line:      rgba(255,255,255,.075);
+  --line-2:    rgba(255,255,255,.14);
+  --text:      #F4F1EC;
+  --text-2:    #B6AFA6;   /* secondary */
+  --muted:     #847C72;   /* faint */
+
+  /* brand accent — Greenworks lime */
+  --accent:        #84CC16;
+  --accent-bright: #A3E635;
+  --accent-deep:   #5E8F0E;
+  --accent-ink:    #0E1403;   /* text on accent */
+  --accent-soft:   rgba(132,204,22,.14);
+  --accent-text:   #A3E635;   /* accent on dark surfaces (readable in both themes) */
+
+  /* theme-aware mixing — overridden by html[data-theme="light"] below */
+  --ink-mix:   #FFFFFF;            /* mixed into badge / pill text */
+  --fill-base: var(--gw-black);    /* base under translucent fills */
+  --thumb-ico: rgba(255,255,255,.16);
+  --ri-ico:    rgba(255,255,255,.22);
+  --hdr-a: rgba(11,10,9,.96); --hdr-b: rgba(11,10,9,.86); --hdr-c: rgba(11,10,9,0);
+
+  /* warranty pills */
+  --green:  #4ADE80;   /* covered */
+  --yellow: #FBBF24;   /* expiring soon */
+  --red:    #FB7185;   /* expired */
+  --gray:   #8B847A;   /* unknown / not tracked */
+
+  /* voltage systems — green-monochrome tints (cohesive) */
+  --sys-24V: #D9F99D;
+  --sys-40V: #A3E635;
+  --sys-60V: #84CC16;
+  --sys-80V: #65A30D;
+  --sys-AC:  #8FA3B8;   /* corded / AC — neutral steel, not a battery */
+  /* type scale */
+  --t-2xs: 10px; --t-xs: 11px; --t-sm: 13px; --t-base: 14px;
+  --t-md: 16px; --t-lg: 19px; --t-xl: 24px; --t-2xl: 31px; --t-3xl: 42px;
+
+  --r-sm: 9px; --r: 14px; --r-lg: 20px;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -12px rgba(0,0,0,.6);
+  --shadow-lift: 0 2px 4px rgba(0,0,0,.4), 0 22px 48px -16px rgba(0,0,0,.72);
+
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Roboto Mono", Menlo, Consolas, monospace;
+
+  --maxw: 1180px;
+}
+
+/* ---------- LIGHT THEME — overrides token VALUES only ---------- */
+html[data-theme="light"]{
+  color-scheme: light;
+  --bg:        #FAFAF9;
+  --surface:   #FFFFFF;
+  --gw-black:  #F4F2EE;
+  --surface-2: #F4F2EE;
+  --surface-3: #E8E4DE;
+  --line:      rgba(28,25,23,.10);
+  --line-2:    rgba(28,25,23,.17);
+  --text:      #1C1917;
+  --text-2:    #57534E;
+  --muted:     #8C857C;
+  --accent-text: #4D7C0F;
+  --shadow:      0 1px 2px rgba(28,25,23,.05), 0 10px 28px -14px rgba(28,25,23,.16);
+  --shadow-lift: 0 2px 5px rgba(28,25,23,.08), 0 22px 46px -18px rgba(28,25,23,.24);
+  --ink-mix:   #14110F;
+  --fill-base: #FFFFFF;
+  --thumb-ico: rgba(28,25,23,.20);
+  --ri-ico:    rgba(28,25,23,.32);
+  --hdr-a: rgba(250,250,249,.94); --hdr-b: rgba(250,250,249,.82); --hdr-c: rgba(250,250,249,0);
+}
+html[data-theme="light"] body{
+  background:
+    radial-gradient(1200px 620px at 78% -8%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%),
+    radial-gradient(900px 500px at 0% 0%, color-mix(in srgb, var(--accent-deep) 6%, transparent), transparent 55%),
+    linear-gradient(rgba(28,25,23,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28,25,23,.045) 1px, transparent 1px),
+    var(--bg);
+  background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+  background-attachment: fixed;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; }
+body{
+  background:
+    radial-gradient(1200px 620px at 78% -8%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%),
+    radial-gradient(900px 500px at 0% 0%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 55%),
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px),
+    var(--bg);
+  background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+  background-attachment: fixed;
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:var(--t-base);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  min-height:100vh;
+}
+::selection{ background:var(--accent); color:var(--accent-ink); }
+a{ color:inherit; }
+button{ font-family:inherit; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:6px; }
+
+.mono{ font-family:var(--mono); font-feature-settings:"tnum" 1, "zero" 1; }
+.eyebrow{
+  font-size:var(--t-2xs); text-transform:uppercase; letter-spacing:.16em;
+  color:var(--muted); font-weight:600;
+}
+
+/* ---------- shell ---------- */
+.wrap{ max-width:var(--maxw); margin:0 auto; padding:0 20px 96px; }
+
+header.app{
+  position:sticky; top:0; z-index:40;
+  background:linear-gradient(180deg, var(--hdr-a), var(--hdr-b) 70%, var(--hdr-c));
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
+}
+.bar{
+  max-width:var(--maxw); margin:0 auto; padding:16px 20px 14px;
+  display:flex; align-items:center; gap:16px;
+}
+.brand{ display:flex; align-items:center; gap:13px; min-width:0; }
+.mark{
+  width:42px; height:42px; border-radius:12px; flex:none;
+  display:grid; place-items:center;
+  background:linear-gradient(145deg, var(--accent-bright), var(--accent-deep));
+  box-shadow:0 6px 18px -6px color-mix(in srgb, var(--accent) 55%, transparent), inset 0 1px 0 rgba(255,255,255,.4);
+  animation:markPulse 3.4s ease-in-out infinite;
+}
+.mark svg{ width:24px; height:24px; }
+.brand h1{
+  font-size:var(--t-lg); margin:0; font-weight:700; letter-spacing:-.02em;
+  line-height:1.05; white-space:nowrap;
+}
+.brand h1 .sub{ display:block; font-size:var(--t-2xs); letter-spacing:.18em;
+  text-transform:uppercase; color:var(--muted); font-weight:600; margin-top:3px; }
+.bar .spacer{ flex:1; }
+
+.stat-strip{ display:flex; gap:8px; }
+.stat{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  padding:8px 14px; text-align:right; min-width:74px;
+}
+.stat b{ display:block; font-family:var(--mono); font-size:var(--t-md); font-weight:600;
+  letter-spacing:-.02em; line-height:1; }
+.stat span{ font-size:var(--t-2xs); text-transform:uppercase; letter-spacing:.12em; color:var(--muted); }
+.stat.accent b{ color:var(--accent-text); }
+
+/* ---------- tabs ---------- */
+#tabs{
+  max-width:var(--maxw); margin:0 auto; padding:0 20px;
+  display:flex; gap:4px; align-items:center;
+  border-bottom:1px solid var(--line);
+  overflow-x:auto; scrollbar-width:none;
+}
+#tabs::-webkit-scrollbar{ display:none; }
+#tabs button{
+  appearance:none; background:none; border:0; cursor:pointer;
+  color:var(--text-2); font-size:var(--t-sm); font-weight:600;
+  padding:14px 14px 13px; position:relative; white-space:nowrap;
+  display:inline-flex; align-items:center; gap:8px; letter-spacing:.01em;
+  transition:color .15s, background .2s; border-radius:10px 10px 0 0;
+}
+#tabs button svg{ width:17px; height:17px; opacity:.7; transition:opacity .15s; }
+#tabs button:hover{ color:var(--text); background:color-mix(in srgb, var(--text) 6%, transparent); }
+#tabs button .count{
+  font-family:var(--mono); font-size:11px; background:var(--surface-2);
+  color:var(--text-2); padding:1px 7px; border-radius:20px; font-weight:600;
+}
+#tabs button.active{ color:var(--text); background:linear-gradient(180deg, var(--accent-soft), transparent 92%); }
+#tabs button.active svg{ opacity:1; color:var(--accent); }
+#tabs button.active .count{ background:var(--accent-soft); color:var(--accent-text); }
+#tabs button.active::after{
+  content:""; position:absolute; left:10px; right:10px; bottom:-1px; height:3px;
+  background:linear-gradient(90deg, var(--accent-bright), var(--accent)); border-radius:3px 3px 0 0;
+  box-shadow:0 0 14px var(--accent); animation:tabBar .25s cubic-bezier(.2,.8,.3,1);
+}
+
+/* ---------- toolbar ---------- */
+.toolbar{
+  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+  margin:22px 0 18px;
+}
+.field{ position:relative; flex:1; min-width:200px; }
+.field svg{ position:absolute; left:13px; top:50%; transform:translateY(-50%);
+  width:17px; height:17px; color:var(--muted); pointer-events:none; }
+#search{
+  width:100%; background:var(--surface-2); border:1px solid var(--line);
+  border-radius:var(--r); color:var(--text); font-size:var(--t-base);
+  padding:12px 14px 12px 40px; font-family:var(--sans);
+  appearance:none; -webkit-appearance:none;
+  transition:border-color .15s;
+}
+#search::-webkit-search-cancel-button{ -webkit-appearance:none; appearance:none; }
+#search::placeholder{ color:var(--muted); }
+#search:focus{ outline:none; border-color:var(--accent); background:var(--surface); box-shadow:0 0 0 3px var(--accent-soft); }
+.sel-wrap{ position:relative; }
+.sel-wrap .chev{ position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  width:15px; height:15px; color:var(--muted); pointer-events:none; }
+#sort{
+  appearance:none; background:var(--surface-2); border:1px solid var(--line);
+  border-radius:var(--r); color:var(--text); font-size:var(--t-sm); font-weight:600;
+  padding:12px 36px 12px 14px; cursor:pointer; font-family:var(--sans);
+}
+#sort:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+/* custom sort dropdown — native <option> hover can't be recolored (OS-drawn), so we roll our own */
+#sort{ display:none; }
+.csel{ appearance:none; cursor:pointer; background:var(--surface-2); border:1px solid var(--line);
+  border-radius:var(--r); color:var(--text); font-size:var(--t-sm); font-weight:600; font-family:var(--sans);
+  padding:12px 36px 12px 14px; text-align:left; white-space:nowrap; }
+.csel:hover{ background:var(--surface-3); }
+.csel:focus-visible{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+.csel-pop{ position:absolute; top:calc(100% + 6px); left:0; min-width:100%; z-index:70;
+  background:var(--surface-2); border:1px solid var(--line-2); border-radius:12px; padding:6px;
+  box-shadow:var(--shadow-lift); display:none; }
+.csel-pop.open{ display:block; animation:pop .16s cubic-bezier(.2,.8,.3,1); }
+.csel-opt{ display:flex; align-items:center; gap:8px; padding:9px 12px; border-radius:8px; cursor:pointer;
+  font-size:var(--t-sm); font-weight:600; color:var(--text-2); white-space:nowrap; transition:background .12s, color .12s; }
+.csel-opt[aria-selected="true"]{ color:var(--accent-text); }
+.csel-opt:hover, .csel-opt.active{ background:var(--accent); color:var(--accent-ink); }
+.btn{
+  appearance:none; cursor:pointer; border:1px solid var(--line-2);
+  background:var(--surface-2); color:var(--text); font-weight:600; font-size:var(--t-sm);
+  border-radius:var(--r); padding:12px 16px; display:inline-flex; align-items:center;
+  gap:8px; transition:transform .12s, background .15s, border-color .15s; white-space:nowrap;
+}
+.btn svg{ width:16px; height:16px; }
+.btn:hover{ background:var(--surface-3); }
+.btn:active{ transform:translateY(1px); }
+.btn.primary{
+  background:linear-gradient(160deg, var(--accent-bright), var(--accent));
+  color:var(--accent-ink); border-color:transparent;
+  box-shadow:0 6px 16px -7px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.btn.primary:hover{ filter:brightness(1.06); background:linear-gradient(160deg, var(--accent-bright), var(--accent)); }
+.btn.danger{ color:var(--red); border-color:rgba(251,113,133,.3); }
+.btn.danger:hover{ background:rgba(251,113,133,.12); }
+
+/* ---------- card grid ---------- */
+.grid{
+  display:grid; gap:16px;
+  grid-template-columns:repeat(auto-fill, minmax(270px, 1fr));
+}
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+  overflow:hidden; cursor:pointer; position:relative;
+  box-shadow:var(--shadow);
+  transition:transform .18s cubic-bezier(.2,.7,.3,1), border-color .18s, box-shadow .18s;
+}
+.card::before{ content:""; position:absolute; top:0; left:0; right:0; height:3px; z-index:4;
+  background:linear-gradient(90deg, var(--accent-bright), var(--accent));
+  transform:scaleX(0); transform-origin:left; transition:transform .28s cubic-bezier(.2,.8,.3,1); }
+.card:hover::before{ transform:scaleX(1); }
+.card::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:38%; z-index:0; pointer-events:none;
+  background:radial-gradient(120% 100% at 50% 130%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 70%);
+  opacity:.35; transition:opacity .28s; }
+.card:hover::after{ opacity:1; }
+.card-body{ position:relative; z-index:1; }
+.card:hover{ transform:translateY(-4px);
+  border-color:color-mix(in srgb, var(--accent) 30%, var(--line-2));
+  box-shadow:var(--shadow-lift), 0 18px 48px -22px color-mix(in srgb, var(--accent) 55%, transparent); }
+.card:active{ transform:translateY(-2px) scale(.995); }
+@keyframes cardIn{ from{ opacity:0; transform:translateY(12px) scale(.985); } to{ opacity:1; transform:none; } }
+.card.in{ animation:cardIn .44s cubic-bezier(.2,.8,.3,1) backwards; animation-delay:calc(var(--i,0)*45ms); }
+@keyframes wishIn{ from{ opacity:0; transform:translateX(-26px); clip-path:inset(0 100% 0 0 round var(--r)); }
+  to{ opacity:1; transform:none; clip-path:inset(0 0 0 0 round var(--r)); } }
+.wishrow.in{ animation:wishIn .5s cubic-bezier(.22,.85,.28,1) backwards; animation-delay:calc(var(--i,0)*60ms); }
+.wishrow.in .wr-tile{ animation:tilePop .55s cubic-bezier(.2,1.3,.4,1) backwards; animation-delay:calc(var(--i,0)*60ms + 120ms); }
+@keyframes tilePop{ from{ opacity:0; transform:scale(.4) rotate(-12deg); } to{ opacity:1; transform:none; } }
+.thumb{
+  aspect-ratio:16/10; background:var(--gw-black); position:relative; overflow:hidden;
+  display:grid; place-items:center;
+}
+.thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.thumb.ph{
+  background:
+    radial-gradient(120% 100% at 50% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 62%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0 12px, transparent 12px 24px),
+    var(--gw-black);
+}
+.thumb.ph svg{ width:62px; height:62px; color:var(--thumb-ico); }
+/* top-left voltage badge floats over thumb */
+.thumb .badge-float{ position:absolute; top:11px; left:11px; }
+.thumb .pill-float{ position:absolute; top:11px; right:11px; }
+
+.card-body{ padding:14px 15px 15px; }
+.card-name{ font-size:var(--t-md); font-weight:700; letter-spacing:-.015em;
+  line-height:1.22; margin:0 0 5px; text-wrap:pretty; }
+.card-model{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+.spec{ display:inline-flex; align-items:center; gap:6px; max-width:100%;
+  background:color-mix(in srgb, var(--gw-black) 55%, var(--surface));
+  border:1px solid var(--line); border-radius:6px; padding:2px 8px; }
+.spec-k{ font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:.11em; color:var(--muted); flex:none; }
+.spec-v{ font-family:var(--mono); font-size:var(--t-xs); color:var(--text); font-weight:600; letter-spacing:.01em;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+.meta{ display:flex; flex-wrap:wrap; gap:6px 16px; padding-top:12px;
+  border-top:1px solid var(--line); }
+.meta .m{ display:flex; flex-direction:column; gap:2px; }
+.meta .m .k{ font-size:var(--t-2xs); text-transform:uppercase; letter-spacing:.1em; color:var(--muted); }
+.meta .m .v{ font-family:var(--mono); font-size:var(--t-sm); color:var(--text); font-weight:600; }
+.card-foot{ display:flex; align-items:center; gap:10px; margin-top:12px; color:var(--text-2); font-size:var(--t-xs); }
+.card-foot .chip{ display:inline-flex; align-items:center; gap:5px; }
+.card-foot svg{ width:13px; height:13px; color:var(--accent); }
+
+/* ---------- voltage badges (keep .sys-XXV class names) ---------- */
+.sys{
+  display:inline-flex; align-items:center; gap:6px; font-family:var(--mono);
+  font-size:var(--t-2xs); font-weight:700; letter-spacing:.04em;
+  padding:4px 9px 4px 7px; border-radius:8px; white-space:nowrap;
+  --c:var(--gray);
+  color:color-mix(in srgb, var(--c) 78%, var(--ink-mix));
+  background:color-mix(in srgb, var(--c) 16%, var(--fill-base));
+  border:1px solid color-mix(in srgb, var(--c) 34%, transparent);
+}
+.sys .pips{ display:inline-flex; gap:1.5px; align-items:center; padding:2px; border-radius:3px;
+  border:1px solid color-mix(in srgb, currentColor 42%, transparent); position:relative; margin-right:3px; }
+.sys .pips::after{ content:""; position:absolute; right:-3.5px; top:50%; transform:translateY(-50%);
+  width:2px; height:5px; border-radius:0 1px 1px 0; background:currentColor; opacity:.7; }
+.sys .pips i{ width:3px; height:8px; border-radius:1px; background:currentColor; opacity:.2; transition:opacity .3s; }
+.sys .pips i.on{ opacity:1; }
+.sys-24V{ --c:var(--sys-24V); }
+.sys-40V{ --c:var(--sys-40V); }
+.sys-60V{ --c:var(--sys-60V); }
+.sys-80V{ --c:var(--sys-80V); }
+.sys-AC{ --c:var(--sys-AC); }
+.sys.corded .plug{ display:inline-flex; align-items:center; margin-right:2px; }
+.sys.corded .plug svg{ width:11px; height:11px; }
+
+/* ---------- warranty pills (keep .green/.yellow/.red/.gray) ---------- */
+.pill{
+  display:inline-flex; align-items:center; gap:6px; font-size:var(--t-2xs);
+  font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+  padding:4px 9px; border-radius:20px; white-space:nowrap; --c:var(--gray);
+  color:color-mix(in srgb, var(--c) 82%, var(--ink-mix));
+  background:color-mix(in srgb, var(--c) 15%, var(--fill-base));
+  border:1px solid color-mix(in srgb, var(--c) 30%, transparent);
+}
+.pill::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--c);
+  box-shadow:0 0 8px var(--c); }
+.pill.green{ --c:var(--green); }
+.pill.yellow{ --c:var(--yellow); }
+.pill.red{ --c:var(--red); }
+.pill.gray{ --c:var(--gray); }
+
+/* ---------- By Battery System view ---------- */
+.sysgroup{ margin-bottom:30px; }
+.sysgroup-head{ display:flex; align-items:center; gap:16px; margin:0 0 16px; --c:var(--gray); }
+.sysgroup-head .vnum{ flex:none; display:flex; align-items:baseline; font-family:var(--mono);
+  font-size:46px; font-weight:800; line-height:.82; letter-spacing:-.045em;
+  color:color-mix(in srgb, var(--c) 80%, var(--ink-mix));
+  text-shadow:0 0 30px color-mix(in srgb, var(--c) 55%, transparent); }
+.sysgroup-head .vu{ font-size:19px; font-weight:700; margin-left:2px; opacity:.65; }
+.sysgroup-head .vmid{ flex:1; min-width:60px; display:flex; flex-direction:column; gap:7px; }
+.sysgroup-head .vtier{ font-size:var(--t-2xs); font-weight:700; text-transform:uppercase; letter-spacing:.15em;
+  color:color-mix(in srgb, var(--c) 68%, var(--ink-mix)); display:inline-flex; align-items:center; gap:7px; }
+.sysgroup-head .vtier::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--c); box-shadow:0 0 8px var(--c); }
+.sysgroup-head .vchg{ display:block; height:6px; max-width:340px; border-radius:6px; overflow:hidden;
+  background:var(--surface-2); border:1px solid var(--line); }
+.sysgroup-head .vchg > span{ display:block; height:100%; border-radius:6px; min-width:5px;
+  background:linear-gradient(90deg, color-mix(in srgb, var(--c) 55%, transparent), var(--c));
+  box-shadow:0 0 10px var(--c); transition:width .5s cubic-bezier(.2,.8,.3,1); }
+.sysgroup-head .vmeta{ flex:none; font-size:var(--t-xs); color:var(--muted); display:flex; gap:14px; text-align:right; }
+.sysgroup-head .vmeta b{ color:var(--text-2); font-family:var(--mono); }
+.sysgroup-head[data-v="24V"]{ --c:var(--sys-24V); }
+.sysgroup-head[data-v="40V"]{ --c:var(--sys-40V); }
+.sysgroup-head[data-v="60V"]{ --c:var(--sys-60V); }
+.sysgroup-head[data-v="80V"]{ --c:var(--sys-80V); }
+.sysgroup-head[data-v="AC"]{ --c:var(--sys-AC); }
+.sysgroup-head[data-w="green"]{ --c:var(--green); }
+.sysgroup-head[data-w="yellow"]{ --c:var(--yellow); }
+.sysgroup-head[data-w="red"]{ --c:var(--red); }
+.sysgroup-head[data-w="gray"]{ --c:var(--gray); }
+.sysgroup-head.cap-head{ --c:var(--accent); }
+.sysgroup-head .wlabel{ flex:none; min-width:140px; display:inline-flex; align-items:center; gap:11px;
+  font-size:27px; font-weight:800; letter-spacing:-.02em; line-height:1;
+  color:color-mix(in srgb, var(--c) 80%, var(--ink-mix));
+  text-shadow:0 0 26px color-mix(in srgb, var(--c) 45%, transparent); }
+.sysgroup-head .wlabel::before{ content:""; width:11px; height:11px; border-radius:50%; background:var(--c);
+  box-shadow:0 0 12px var(--c); flex:none; }
+.sysgroup .sub{ display:flex; align-items:center; gap:8px; margin:16px 0 10px; }
+.sysgroup .sub .lbl{ font-size:var(--t-2xs); text-transform:uppercase; letter-spacing:.14em;
+  color:var(--muted); font-weight:700; }
+.sysgroup .sub .ln{ flex:1; height:1px; background:var(--line); }
+
+.rowcard{
+  display:flex; align-items:center; gap:14px; background:var(--surface);
+  border:1px solid var(--line); border-radius:var(--r); padding:11px 14px;
+  cursor:pointer; transition:border-color .15s, background .15s, transform .12s; margin-bottom:8px;
+}
+.rowcard:hover{ border-color:var(--line-2); background:var(--surface-2); transform:translateX(2px); }
+.rowcard .ri{ width:46px; height:46px; border-radius:11px; flex:none; background:var(--gw-black);
+  display:grid; place-items:center; overflow:hidden; }
+.rowcard .ri svg{ width:24px; height:24px; color:var(--ri-ico); }
+.rowcard .ri img{ width:100%; height:100%; object-fit:cover; }
+.rowcard .rt{ flex:1; min-width:0; }
+.rowcard .rt .nm{ font-weight:700; font-size:var(--t-base); letter-spacing:-.01em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.rowcard .rt .md{ font-family:var(--mono); font-size:var(--t-xs); color:var(--text-2); }
+.rowcard .rr{ display:flex; align-items:center; gap:12px; flex:none; }
+.rowcard .price{ font-family:var(--mono); font-size:var(--t-sm); color:var(--text-2); font-weight:600; }
+
+/* ---------- empty state ---------- */
+.empty{ text-align:center; padding:64px 20px; color:var(--muted); }
+.empty svg{ width:54px; height:54px; color:var(--surface-3); margin-bottom:14px; }
+.empty h3{ color:var(--text-2); font-size:var(--t-md); margin:0 0 4px; }
+.empty p{ margin:0; font-size:var(--t-sm); }
+
+/* ---------- settings ---------- */
+.settings{ max-width:680px; }
+.scard{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+  padding:22px; margin-bottom:16px; }
+.scard h2{ font-size:var(--t-md); margin:0 0 4px; font-weight:700; letter-spacing:-.01em; }
+.scard p{ margin:0 0 16px; color:var(--text-2); font-size:var(--t-sm); }
+.scard .row{ display:flex; gap:10px; flex-wrap:wrap; }
+.scard.danger-zone{ border-color:rgba(251,113,133,.22); background:
+   linear-gradient(0deg, rgba(251,113,133,.04), rgba(251,113,133,.04)), var(--surface); }
+.kv{ display:flex; justify-content:space-between; padding:11px 0; border-top:1px solid var(--line);
+  font-size:var(--t-sm); }
+.kv:first-of-type{ border-top:0; }
+.kv .k{ color:var(--text-2); }
+.kv .v{ font-family:var(--mono); color:var(--text); font-weight:600; }
+.bk-folder{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px; padding-top:14px;
+  border-top:1px solid var(--line); font-size:var(--t-sm); color:var(--text-2); }
+.bk-folder b{ color:var(--accent-text); font-family:var(--mono); font-weight:600; }
+.bk-folder .spread{ flex:1; min-width:0; }
+.bk-folder .btn{ padding:9px 13px; }
+.bk-folder .btn svg{ width:15px; height:15px; }
+
+/* ---------- modal ---------- */
+#modal-bg{
+  position:fixed; inset:0; z-index:90; display:none;
+  background:rgba(5,5,4,.62); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  padding:max(20px, env(safe-area-inset-top)) 16px 16px; overflow-y:auto;
+}
+#modal-bg.open{ display:flex; align-items:flex-start; justify-content:center; }
+#modal{
+  background:var(--surface); border:1px solid var(--line-2); border-radius:var(--r-lg);
+  width:100%; max-width:560px; margin:auto; box-shadow:var(--shadow-lift);
+  animation:pop .22s cubic-bezier(.2,.8,.3,1);
+}
+@keyframes pop{ from{ transform:translateY(14px) scale(.985); opacity:0; } to{ transform:none; opacity:1; } }
+.m-head{ display:flex; align-items:flex-start; gap:12px; padding:18px 18px 14px; }
+.m-head .m-title{ flex:1; min-width:0; }
+.m-head h2{ margin:0; font-size:var(--t-lg); font-weight:700; letter-spacing:-.02em; line-height:1.15; }
+.m-head .m-sub{ font-family:var(--mono); font-size:var(--t-xs); color:var(--text-2); margin-top:4px; }
+.m-head [data-close]{
+  appearance:none; cursor:pointer; flex:none; width:34px; height:34px; border-radius:10px;
+  border:1px solid var(--line); background:var(--surface-2); color:var(--text-2);
+  display:grid; place-items:center; transition:background .15s, color .15s;
+}
+.m-head [data-close]:hover{ background:var(--surface-3); color:var(--text); }
+.m-head [data-close] svg{ width:16px; height:16px; }
+.m-body{ padding:4px 18px 18px; }
+
+/* photo upload */
+#photo-preview{
+  aspect-ratio:16/10; border-radius:var(--r); overflow:hidden; background:var(--gw-black);
+  border:1px dashed var(--line-2); display:grid; place-items:center; margin-bottom:14px;
+  position:relative; cursor:pointer;
+}
+#photo-preview img{ width:100%; height:100%; object-fit:cover; }
+#photo-preview .ph-hint{ text-align:center; color:var(--muted); font-size:var(--t-sm);
+  display:flex; flex-direction:column; align-items:center; gap:8px; }
+#photo-preview .ph-hint svg{ width:30px; height:30px; color:var(--surface-3); }
+#photo-input{ display:none; }
+
+/* ---------- photo cropper (zoom + pan) ---------- */
+#cropper{ position:fixed; inset:0; z-index:120; display:none; align-items:center; justify-content:center;
+  padding:16px; background:rgba(5,5,4,.8); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+#cropper.open{ display:flex; }
+.crop-panel{ background:var(--surface); border:1px solid var(--line-2); border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lift); width:100%; max-width:520px; padding:18px; animation:pop .22s cubic-bezier(.2,.8,.3,1); }
+.crop-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.crop-head h3{ margin:0; font-size:var(--t-md); font-weight:700; letter-spacing:-.01em; }
+.crop-head .x{ appearance:none; cursor:pointer; width:34px; height:34px; border-radius:10px; border:1px solid var(--line);
+  background:var(--surface-2); color:var(--text-2); display:grid; place-items:center; }
+.crop-head .x:hover{ background:var(--surface-3); color:var(--text); }
+.crop-head .x svg{ width:16px; height:16px; }
+.crop-stage{ position:relative; width:100%; aspect-ratio:16/10; background:var(--gw-black);
+  border-radius:var(--r); overflow:hidden; touch-action:none; cursor:grab; }
+.crop-stage:active{ cursor:grabbing; }
+.crop-stage img{ position:absolute; top:0; left:0; transform-origin:0 0; will-change:transform;
+  max-width:none; user-select:none; -webkit-user-drag:none; pointer-events:none; }
+.crop-stage::after{ content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(rgba(255,255,255,.14) 1px,transparent 1px) 0 0/100% 33.33%,
+             linear-gradient(90deg,rgba(255,255,255,.14) 1px,transparent 1px) 0 0/33.33% 100%;
+  opacity:0; transition:opacity .15s; }
+.crop-stage.moving::after{ opacity:1; }
+.crop-hint{ font-size:var(--t-2xs); color:var(--muted); text-align:center; margin-top:8px; }
+.crop-controls{ display:flex; align-items:center; gap:12px; margin-top:12px; color:var(--muted); }
+.crop-controls svg{ flex:none; }
+#crop-zoom{ flex:1; accent-color:var(--accent); cursor:pointer; }
+.crop-foot{ display:flex; align-items:center; gap:10px; margin-top:14px; flex-wrap:wrap; }
+.crop-foot .spacer{ flex:1; min-width:0; }
+
+.form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.fg-full{ grid-column:1 / -1; }
+.fg-sub{ grid-column:1 / -1; display:flex; align-items:center; gap:10px; margin-top:8px;
+  font-size:var(--t-2xs); text-transform:uppercase; letter-spacing:.14em; color:color-mix(in srgb, var(--accent) 70%, var(--text-2)); font-weight:700; }
+.fg-sub::after{ content:""; flex:1; height:1px; background:var(--line); }
+.flbl{ display:block; font-size:var(--t-2xs); text-transform:uppercase; letter-spacing:.1em;
+  color:var(--muted); font-weight:700; margin:0 0 6px; }
+.inp, textarea.inp, select.inp{
+  width:100%; background:var(--surface-2); border:1px solid var(--line);
+  border-radius:var(--r-sm); color:var(--text); font-size:var(--t-base); font-family:var(--sans);
+  padding:10px 12px; transition:border-color .15s;
+}
+.inp:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+textarea.inp{ resize:vertical; min-height:74px; line-height:1.5; }
+select.inp{ appearance:none; cursor:pointer; }
+
+.maint{ margin-top:18px; border-top:1px solid var(--line); padding-top:16px; }
+.maint h3{ font-size:var(--t-sm); margin:0 0 10px; font-weight:700; letter-spacing:.01em;
+  display:flex; align-items:center; gap:8px; }
+.maint h3 .ct{ font-family:var(--mono); font-size:11px; background:var(--surface-2);
+  color:var(--text-2); padding:1px 7px; border-radius:20px; }
+.mlog{ display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-top:1px solid var(--line); }
+.mlog .md{ font-family:var(--mono); font-size:var(--t-xs); color:var(--accent-text); white-space:nowrap;
+  padding-top:1px; min-width:74px; }
+.mlog .mtxt{ flex:1; font-size:var(--t-sm); color:var(--text); }
+.mlog [data-delmaint]{ appearance:none; background:none; border:0; cursor:pointer; color:var(--muted);
+  padding:2px; border-radius:6px; flex:none; transition:color .15s; }
+.mlog [data-delmaint]:hover{ color:var(--red); }
+.mlog [data-delmaint] svg{ width:14px; height:14px; }
+.mlog-add{ display:flex; gap:8px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+.mlog-add .inp{ flex:1; }
+.mlog-add input[type="date"]{ flex:0 0 auto; max-width:160px; }
+
+.m-foot{ display:flex; align-items:center; flex-wrap:wrap; gap:10px; padding:16px 18px; border-top:1px solid var(--line);
+  background:var(--gw-black); border-radius:0 0 var(--r-lg) var(--r-lg); }
+.m-foot .btn{ flex:0 0 auto; }
+.m-foot .spacer{ flex:1 1 auto; min-width:0; }
+
+/* ---------- theme toggle button ---------- */
+.icon-btn{
+  appearance:none; cursor:pointer; width:40px; height:40px; border-radius:11px; flex:none;
+  border:1px solid var(--line); background:var(--surface); color:var(--text-2);
+  display:grid; place-items:center; transition:background .15s, color .15s, border-color .15s;
+}
+.icon-btn:hover{ background:var(--surface-2); color:var(--text); border-color:var(--line-2); }
+.icon-btn svg{ width:19px; height:19px; }
+
+/* ---------- manual (PDF) slot ---------- */
+.manual-slot{
+  display:flex; align-items:center; gap:11px; padding:11px 12px; border-radius:var(--r-sm);
+  background:var(--surface-2); border:1px solid var(--line); cursor:pointer;
+  transition:border-color .15s, background .15s; text-decoration:none; color:inherit;
+}
+.manual-slot.empty{ border-style:dashed; border-color:var(--line-2); }
+.manual-slot.empty:hover{ border-color:var(--accent); background:var(--surface-3); }
+/* filled slot: clickable + green outline on hover */
+.manual-slot.has{
+  cursor:pointer;
+  transition:border-color .15s, background .15s, box-shadow .15s;
+}
+.manual-slot.has:hover{
+  border-color:var(--accent);
+  background:var(--surface-3);
+  box-shadow:0 0 0 1px var(--accent),
+             0 0 14px -2px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.manual-slot .mf-ico{ width:38px; height:38px; border-radius:9px; flex:none; display:grid; place-items:center;
+  background:var(--accent-soft); color:var(--accent-text); }
+.manual-slot .mf-ico svg{ width:19px; height:19px; }
+.manual-slot .mf-meta{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.manual-slot .mf-name{ font-weight:600; font-size:var(--t-sm); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.manual-slot .mf-sub{ font-size:var(--t-2xs); color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+.manual-slot .mf-act{ appearance:none; cursor:pointer; flex:none; width:32px; height:32px; border-radius:8px;
+  border:1px solid var(--line); background:var(--surface); color:var(--text-2); display:grid; place-items:center;
+  transition:color .15s, background .15s, border-color .15s; }
+.manual-slot .mf-act:hover{ background:var(--surface-3); color:var(--text); }
+.manual-slot .mf-act[data-manual-del]:hover, .manual-slot .mf-act[data-receipt-del]:hover{ color:var(--red); border-color:rgba(251,113,133,.35); }
+.manual-slot .mf-act svg{ width:15px; height:15px; }
+/* the "View" label that wipes in */
+.manual-slot .mf-open{
+  display:flex; align-items:center; gap:11px;
+  flex:1; min-width:0; cursor:pointer; border-radius:8px;
+}
+.manual-slot .mf-open::after{
+  content:"View";
+  margin-left:auto; align-self:center; padding-right:4px;
+  font-size:var(--t-2xs); font-weight:700;
+  text-transform:uppercase; letter-spacing:.09em;
+  color:var(--accent-text);
+  opacity:0; transform:translateX(-4px);          /* hidden, nudged left */
+  transition:opacity .15s, transform .15s;
+}
+.manual-slot .has:hover .mf-open::after,
+.manual-slot.has:hover .mf-open::after{
+  opacity:1; transform:none;                        /* fades in + slides to rest */
+}
+/* nice-to-have: name turns green, icon brightens on hover */
+.manual-slot.has:hover .mf-name{ color:var(--accent-text); }
+.manual-slot.has:hover .mf-ico{ filter:brightness(1.08); }
+
+/* ---------- document viewer (PDF / image) ---------- */
+#pdfview{ position:fixed; inset:0; z-index:130; display:none; align-items:center; justify-content:center; padding:16px;
+  background:rgba(5,5,4,.82); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+#pdfview.open{ display:flex; }
+.pv-panel{ background:var(--surface); border:1px solid var(--line-2); border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lift), 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent), 0 30px 90px -30px color-mix(in srgb, var(--accent) 40%, transparent);
+  width:100%; max-width:1040px; height:92vh; display:flex; flex-direction:column; overflow:hidden; animation:pop .2s cubic-bezier(.2,.8,.3,1); }
+.pv-head{ position:relative; display:flex; align-items:center; gap:12px; padding:12px 14px;
+  border-bottom:1px solid var(--line); background:var(--gw-black); }
+.pv-head::after{ content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px;
+  background:linear-gradient(90deg, transparent, var(--accent), transparent); opacity:.55; }
+.pv-ico{ width:34px; height:34px; border-radius:9px; flex:none; display:grid; place-items:center;
+  background:linear-gradient(150deg, var(--accent-bright), var(--accent-deep)); color:var(--accent-ink); }
+.pv-ico svg{ width:18px; height:18px; }
+.pv-titles{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+.pv-titles h3{ margin:0; font-size:var(--t-md); font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pv-sub{ font-family:var(--mono); font-size:var(--t-2xs); color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
+.pv-zoom{ display:flex; align-items:center; gap:2px; flex:none; background:var(--surface-2);
+  border:1px solid var(--line); border-radius:10px; padding:2px; }
+.pv-zoom .zb{ appearance:none; cursor:pointer; width:30px; height:30px; border:0; border-radius:8px;
+  background:none; color:var(--text-2); display:grid; place-items:center; }
+.pv-zoom .zb:hover{ color:var(--accent-text); background:var(--surface-3); }
+.pv-zoom .zb svg{ width:15px; height:15px; }
+.pv-zoom .lvl{ appearance:none; cursor:pointer; border:0; background:none; color:var(--text-2);
+  font-family:var(--mono); font-size:var(--t-xs); font-weight:600; min-width:48px; text-align:center;
+  padding:0 4px; border-radius:8px; height:30px; }
+.pv-zoom .lvl:hover{ color:var(--accent-text); background:var(--surface-3); }
+.pv-actions{ display:flex; align-items:center; gap:8px; flex:none; }
+.pv-actions .icon, .pv-actions .x{ appearance:none; cursor:pointer; width:36px; height:36px; border-radius:10px;
+  border:1px solid var(--line); background:var(--surface-2); color:var(--text-2); display:grid; place-items:center;
+  text-decoration:none; transition:background .15s, color .15s; }
+.pv-actions .icon:hover{ background:var(--accent); color:var(--accent-ink); }
+.pv-actions .x:hover{ background:var(--red); color:#fff; }
+.pv-actions svg{ width:16px; height:16px; }
+#pv-body{ flex:1; min-height:0; overflow:auto; cursor:grab; display:grid; place-items:center; padding:26px;
+  background:
+    radial-gradient(600px 200px at 50% 0%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 70%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,.012) 0 10px, transparent 10px 20px),
+    var(--gw-black);
+  scrollbar-width:thin; scrollbar-color:var(--surface-3) transparent; }
+#pv-body::-webkit-scrollbar{ width:8px; height:8px; }
+#pv-body::-webkit-scrollbar-thumb{ background:var(--surface-3); border-radius:8px; }
+#pv-body::-webkit-scrollbar-thumb:hover{ background:var(--accent); }
+#pv-body.grabbing{ cursor:grabbing; }
+.pv-canvas{ transform-origin:center center; transition:transform .12s ease-out; }
+.pv-canvas img{ display:block; max-width:min(880px,86vw); border-radius:6px; box-shadow:0 10px 40px -12px rgba(0,0,0,.8); }
+.pv-canvas iframe{ width:min(860px,88vw); height:min(1120px,82vh); border:0; border-radius:6px; background:#fff; display:block; }
+.pv-hint{ flex:none; text-align:center; font-size:var(--t-2xs); color:var(--muted); padding:7px 10px;
+  border-top:1px solid var(--line); background:var(--gw-black); }
+@media (max-width:640px){
+  #pdfview{ padding:0; }
+  .pv-panel{ border-radius:0; border:0; height:100%; max-width:100%; }
+  .pv-sub{ display:none; }
+}
+
+/* ---------- wishlist ---------- */
+.prio{
+  display:inline-flex; align-items:center; gap:5px; font-size:var(--t-2xs); font-weight:700;
+  letter-spacing:.04em; text-transform:uppercase; padding:4px 9px; border-radius:20px; white-space:nowrap; --c:var(--yellow);
+  color:color-mix(in srgb, var(--c) 82%, var(--ink-mix));
+  background:color-mix(in srgb, var(--c) 15%, var(--fill-base));
+  border:1px solid color-mix(in srgb, var(--c) 30%, transparent);
+}
+.prio::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--c); box-shadow:0 0 8px var(--c); }
+.prio.high{ --c:var(--accent); }
+.prio.med{ --c:var(--yellow); }
+.prio.low{ --c:var(--gray); }
+.wishrow{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; background:var(--surface);
+  border:1px solid var(--line); border-radius:var(--r); padding:12px 14px; cursor:pointer;
+  box-shadow:var(--shadow); transition:border-color .15s, background .15s, transform .12s; margin-bottom:8px; }
+.wishrow:hover{ border-color:var(--line-2); background:var(--surface-2); transform:translateX(2px); }
+.wr-tile{ width:42px; height:42px; border-radius:11px; flex:none; display:grid; place-items:center; --c:var(--yellow);
+  background:color-mix(in srgb, var(--c) 15%, var(--fill-base)); color:color-mix(in srgb, var(--c) 80%, var(--ink-mix));
+  border:1px solid color-mix(in srgb, var(--c) 26%, transparent); }
+.wr-tile.high{ --c:var(--accent); } .wr-tile.med{ --c:var(--yellow); } .wr-tile.low{ --c:var(--gray); }
+.wr-tile svg{ width:20px; height:20px; }
+.wr-main{ flex:1 1 220px; min-width:0; }
+.wr-name{ font-weight:700; font-size:var(--t-base); letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.wr-sub{ font-size:var(--t-xs); color:var(--text-2); margin-top:2px; }
+.wr-sub .sep{ color:var(--muted); margin:0 2px; }
+.wr-right{ display:flex; align-items:center; gap:12px; flex:none; margin-left:auto; }
+.wr-price{ font-family:var(--mono); font-weight:700; font-size:var(--t-md); letter-spacing:-.02em; line-height:1.05; text-align:right; }
+.wr-price small{ display:block; font-family:var(--sans); font-weight:600; font-size:var(--t-2xs); text-transform:uppercase; letter-spacing:.1em; color:var(--muted); }
+.wr-link{ width:34px; height:34px; border-radius:9px; border:1px solid var(--line); background:var(--surface-2);
+  color:var(--text-2); display:grid; place-items:center; transition:background .15s, color .15s, border-color .15s; flex:none; text-decoration:none; }
+.wr-link:hover{ background:var(--surface-3); color:var(--accent-text); border-color:var(--line-2); }
+.wr-link svg{ width:15px; height:15px; }
+@media (max-width:560px){
+  .wr-right{ width:100%; margin-left:56px; justify-content:flex-start; }
+}
+.wr-acq{ width:34px; height:34px; border-radius:9px; flex:none; cursor:pointer;
+  border:1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+  background:var(--accent-soft); color:var(--accent-text);
+  display:grid; place-items:center; transition:background .15s, color .15s, border-color .15s; }
+.wr-acq:hover{ background:color-mix(in srgb, var(--accent) 24%, var(--fill-base)); color:var(--accent); }
+.wr-acq svg{ width:16px; height:16px; }
+.btn.acq{ color:var(--accent-text); background:var(--accent-soft);
+  border-color:color-mix(in srgb, var(--accent) 40%, transparent); }
+.btn.acq:hover{ background:color-mix(in srgb, var(--accent) 18%, var(--fill-base)); }
+
+/* ---------- motion & flourish ---------- */
+@keyframes markPulse{ 0%,100%{ box-shadow:0 6px 18px -6px color-mix(in srgb, var(--accent) 50%, transparent), inset 0 1px 0 rgba(255,255,255,.4); } 50%{ box-shadow:0 9px 28px -6px color-mix(in srgb, var(--accent) 85%, transparent), inset 0 1px 0 rgba(255,255,255,.55); } }
+@keyframes tabBar{ from{ transform:scaleX(.2); opacity:0; } to{ transform:none; opacity:1; } }
+@keyframes sheen{ to{ transform:translateX(130%); } }
+.btn.primary{ position:relative; overflow:hidden; }
+.btn.primary::after{ content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(115deg, transparent 32%, rgba(255,255,255,.4) 50%, transparent 68%);
+  transform:translateX(-130%); }
+.btn.primary:hover::after{ animation:sheen .75s ease; }
+@keyframes sparkOut{ to{ transform:translate(var(--dx),var(--dy)) scale(.2) rotate(var(--rot)); opacity:0; } }
+.spark{ position:fixed; z-index:140; width:10px; height:10px; border-radius:2px; pointer-events:none;
+  will-change:transform,opacity; box-shadow:0 0 10px currentColor; }
+
+/* ---------- green highlights ---------- */
+header.app::before{ content:""; position:absolute; top:0; left:0; right:0; height:3px; z-index:60;
+  background:linear-gradient(90deg, var(--accent-deep), var(--accent-bright) 45%, var(--accent-deep));
+  background-size:220% 100%; animation:railFlow 7s linear infinite; }
+@keyframes railFlow{ to{ background-position:220% 0; } }
+.stat{ position:relative; }
+.stat::after{ content:""; display:block; width:18px; height:2px; margin:6px 0 0 auto;
+  background:var(--accent); border-radius:2px; opacity:.55; }
+.thumb.ph svg{ transition:color .25s; }
+.card:hover .thumb.ph svg{ color:color-mix(in srgb, var(--accent) 55%, var(--thumb-ico)); }
+.sys .pips i.on{ box-shadow:0 0 5px currentColor; }
+.card-foot .chip svg{ transition:color .2s; }
+.card:hover .card-foot .chip svg{ color:var(--accent-text); }
+.sysgroup-head .vnum{ text-shadow:0 0 26px color-mix(in srgb, var(--c) 50%, transparent); }
+.rowcard:hover{ box-shadow:inset 3px 0 0 var(--accent); }
+
+/* ---------- responsive ---------- */
+@media (max-width:640px){
+  .wrap{ padding:0 14px 88px; }
+  .bar{ padding:13px 14px 11px; gap:11px; }
+  .stat-strip{ display:none; }
+  .brand h1{ font-size:var(--t-md); }
+  #tabs{ padding:0 14px; }
+  #tabs button{ padding:13px 11px; }
+  #tabs button .count{ display:none; }
+  .grid{ grid-template-columns:1fr 1fr; gap:11px; }
+  .card-name{ font-size:var(--t-base); }
+  .meta{ gap:6px 12px; }
+  .form-grid{ grid-template-columns:1fr; }
+  .field{ min-width:0; flex-basis:100%; }
+  .sysgroup-head{ flex-wrap:wrap; gap:12px; }
+  .sysgroup-head .vnum{ font-size:38px; }
+  .sysgroup-head .vmeta{ width:100%; justify-content:flex-start; text-align:left; }
+}
+@media (max-width:380px){
+  .grid{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="app">
+  <div class="bar">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4 13.5h6L9.6 22 20 9.5h-6.4L13 2Z" style="fill:var(--accent-ink)"/></svg>
+      </div>
+      <h1>Tool Tracker<span class="sub" id="brand-sub">Greenworks · Personal Inventory</span></h1>
+    </div>
+    <div class="spacer"></div>
+    <div class="stat-strip">
+      <div class="stat"><b id="stat-items">0</b><span>Items</span></div>
+      <div class="stat accent"><b id="stat-value">$0</b><span>Invested</span></div>
+      <div class="stat accent"><b id="stat-warranty">0</b><span>Covered</span></div>
+    </div>
+    <button id="theme-btn" class="icon-btn" type="button" aria-label="Toggle light / dark"></button>
+  </div>
+  <nav id="tabs">
+    <button data-tab="tools" class="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14.7 6.3 3 3M3 21l3.5-1 11-11a2.1 2.1 0 0 0-3-3l-11 11L3 21Z"/></svg>
+      Tools <span class="count" id="c-tools">0</span>
+    </button>
+    <button data-tab="batteries">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="11" rx="2.5"/><path d="M22 11v3M7 4.5h6"/><path d="m11 9.5-2 3h2.5l-2 3" stroke-width="1.5"/></svg>
+      Batteries <span class="count" id="c-batteries">0</span>
+    </button>
+    <button data-tab="wishlist">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.2-9A4.6 4.6 0 0 1 12 6.5 4.6 4.6 0 0 1 21.2 12c-2.2 4.5-9.2 9-9.2 9Z"/></svg>
+      Wishlist <span class="count" id="c-wishlist">0</span>
+    </button>
+    <button data-tab="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 2.5 14H2a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4 8.5a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 9 4.1V4a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V10a2 2 0 1 1 0 4Z"/></svg>
+      Settings
+    </button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <div class="toolbar" id="toolbar">
+    <div class="field">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="text" inputmode="search" placeholder="Search tools, models, serials…" autocomplete="off">
+    </div>
+    <div class="sel-wrap">
+      <select id="sort">
+        <option value="name">Name A–Z</option>
+        <option value="voltage">Battery system</option>
+        <option value="capacity" hidden>Capacity (high–low)</option>
+        <option value="priority" hidden>Priority (high–low)</option>
+        <option value="warranty">Warranty status</option>
+      </select>
+      <button type="button" class="csel" id="csel-btn" aria-haspopup="listbox" aria-expanded="false"><span id="csel-label">Name A–Z</span></button>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      <div class="csel-pop" id="csel-pop" role="listbox" aria-label="Sort"></div>
+    </div>
+    <button class="btn primary" data-action="add">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span id="add-label">Add tool</span>
+    </button>
+  </div>
+
+  <div id="view"></div>
+</main>
+
+<!-- modal -->
+<div id="modal-bg"><div id="modal"></div></div>
+
+<script>
+/* ============================================================
+   GREENWORKS TOOL TRACKER — production engine.
+   Design (CSS + markup templates) by Claude Design; wired to the
+   real storage/CRUD engine here.
+
+   Storage architecture (unchanged from the original engine):
+   • Metadata  -> localStorage (key: greenworks_tracker_data)
+   • Files (photos / receipts / manuals) -> IndexedDB
+   • Export    -> single JSON bundling metadata AND all files
+   • Warranty  -> COMPUTED from purchase date + warranty years
+                  (never a stale manual status)
+   ============================================================ */
+(function(){
+  "use strict";
+  const $  = (s,r=document)=>r.querySelector(s);
+  const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+  const money = n => "$" + (Number(n)||0).toLocaleString("en-US");
+  const esc = s => (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const uuid = ()=> (crypto.randomUUID ? crypto.randomUUID() : "id-"+Date.now()+"-"+Math.floor(Math.random()*1e6));
+  const todayISO = ()=> new Date().toISOString().slice(0,10);
+  const fmtSize = b => b>=1048576 ? (b/1048576).toFixed(1)+" MB" : b>=1024 ? Math.round(b/1024)+" KB" : b+" B";
+  function fmtDate(d){ if(!d) return "—"; const [y,m,da]=d.split("-"); const dt=new Date(y,m-1,da); return isNaN(dt)?"—":dt.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
+
+  /* ---------- config ---------- */
+  const APP_VERSION = "2026-11-02";
+  const STORAGE_KEY = "greenworks_tracker_data";
+  const THEME_KEY   = "gw-theme";
+  const DEFAULT_WARRANTY = 4;         // Greenworks consumer tools & batteries ≈ 4yr
+  const IMG_MAX_DIM = 800, IMG_QUALITY = 0.7;
+
+  /* ---------- icons & badges (from design) ---------- */
+  const I = {
+    chainsaw:'<path d="M3 8h9l3 3h6v3h-7l-3-3H3z"/><path d="M3 8v6M6 14v2M10 14v2M14 14v2"/>',
+    mower:'<path d="M3 16h8l2-6h5"/><circle cx="6" cy="18" r="2"/><circle cx="16" cy="18" r="2.4"/><path d="M18 10V5h3"/>',
+    trimmer:'<path d="M4 4l9 9"/><circle cx="18" cy="18" r="3"/><path d="M14 13l2 2M13 4l1 4-4-1"/>',
+    drill:'<path d="M3 8h10v6H7l-2 4-2-1z"/><path d="M13 9h4l4-2v6l-4-2h-4z"/>',
+    blower:'<path d="M4 9a4 4 0 1 0 0 6h5l8 4V5L9 9z"/><path d="M19 8v8"/>',
+    hedge:'<path d="M5 4l8 8"/><path d="M3 14h8v4a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z"/><path d="M13 12l8-8"/>',
+    battery:'<rect x="3" y="7" width="15" height="11" rx="2"/><path d="M21 11v3"/><path d="m10 9-2 3h3l-2 3"/>',
+    tag:'<path d="M3 11.5V4a1 1 0 0 1 1-1h7.5L21 12.5 12.5 21 3 11.5Z"/><circle cx="7.4" cy="7.4" r="1.4"/>',
+    tool:'<path d="m14.7 6.3 3 3M3 21l3.5-1 11-11a2.1 2.1 0 0 0-3-3l-11 11L3 21Z"/>'
+  };
+  const ico = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${I[k]||I.tool}</svg>`;
+  const PLUG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v5M15 2v5M6 7h12v3a6 6 0 0 1-12 0V7ZM12 16v6"/></svg>';
+  // badge pips scale with the brand's lineup: position in the lineup → 1..4 lit pips
+  const sysBadge = v => { if(!v) return "";
+    if(v==="AC") return `<span class="sys sys-AC corded"><span class="plug">${PLUG}</span>Corded</span>`;
+    const list=brandSystems(), i=list.findIndex(s=>s.id===v);
+    if(i<0) return `<span class="sys">${esc(v)}</span>`;   // legacy value from another brand: plain gray badge
+    const on=Math.max(1, Math.round(((i+1)/list.length)*4));
+    return `<span class="sys sys-${cssSafe(v)}">${esc(v)}<span class="pips">${[1,2,3,4].map(k=>`<i class="${k<=on?'on':''}"></i>`).join("")}</span></span>`;
+  };
+  const WLABEL = {green:"Covered",yellow:"Expiring",red:"Expired",gray:"No warranty"};
+  // Design rule: only Covered / Expiring show a pill; expired & untracked show none.
+  const pill = w => (w==="green"||w==="yellow") ? `<span class="pill ${w}">${WLABEL[w]}</span>` : "";
+  const PRIO = {high:"High",med:"Medium",low:"Low"};
+  const WORDER = ["green","yellow","red","gray"];
+  const WTITLE = {green:"Covered",yellow:"Expiring",red:"Expired",gray:"No warranty"};
+  const WSUB = {green:"Under warranty",yellow:"Ending soon",red:"Out of warranty",gray:"Not tracked"};
+  const prioChip = p => { p=p||"med"; return `<span class="prio ${p}">${PRIO[p]||"Medium"}</span>`; };
+  function hostOf(u){ try{ return new URL(u).hostname.replace(/^www\./,""); }catch(e){ return ""; } }
+  function pickIcon(name){
+    const n=(name||"").toLowerCase();
+    if(n.includes("chainsaw")||n.includes("pole saw")||n.includes("polesaw")) return "chainsaw";
+    if(n.includes("mower")) return "mower";
+    if(n.includes("hedge")) return "hedge";
+    if(n.includes("trimmer")) return "trimmer";
+    if(n.includes("drill")||n.includes("driver")||n.includes("impact")) return "drill";
+    if(n.includes("blower")) return "blower";
+    return "tool";
+  }
+
+  /* ---------- state + persistence (localStorage) ---------- */
+  let data = load();
+  const ui = { tab:"tools", q:"", sort:"name" };
+  let cardsAnimate = false;
+  let modalState = null;
+
+  function load(){
+    try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw) return normalize(JSON.parse(raw)); }
+    catch(e){ console.error("load failed",e); }
+    // Fresh install / new device: start empty. Data is carried in via Settings → Import.
+    return { tools:[], batteries:[], wishlist:[], settings:{} };
+  }
+  function normalize(d){
+    d = d || {};
+    d.tools     = Array.isArray(d.tools)     ? d.tools     : [];
+    d.batteries = Array.isArray(d.batteries) ? d.batteries : [];
+    d.wishlist  = Array.isArray(d.wishlist)  ? d.wishlist  : [];
+    d.settings  = d.settings || {};
+    d.tools.forEach(t=>{ if(!Array.isArray(t.maint)) t.maint=[]; if(t.warranty_years==null||t.warranty_years==="") t.warranty_years=DEFAULT_WARRANTY; });
+    d.batteries.forEach(b=>{ if(b.warranty_years==null||b.warranty_years==="") b.warranty_years=DEFAULT_WARRANTY; });
+    return d;
+  }
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); scheduleAutoBackup(); }
+    catch(e){ alert("Could not save data — localStorage may be full or blocked.\n\n"+e.message); console.error(e); }
+  }
+
+  /* ---------- IndexedDB (photos / receipts / manuals) ---------- */
+  const IDB_NAME="greenworksFiles", IDB_STORE="files";
+  function idbOpen(){ return new Promise((res,rej)=>{ const r=indexedDB.open(IDB_NAME,1);
+    r.onupgradeneeded=()=>r.result.createObjectStore(IDB_STORE); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
+  async function idbGet(k){ const db=await idbOpen(); return new Promise((res,rej)=>{ const tx=db.transaction(IDB_STORE,"readonly"); const r=tx.objectStore(IDB_STORE).get(k); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
+  async function idbSet(k,v){ const db=await idbOpen(); return new Promise((res,rej)=>{ const tx=db.transaction(IDB_STORE,"readwrite"); tx.objectStore(IDB_STORE).put(v,k); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); }); }
+  async function idbDelete(k){ const db=await idbOpen(); return new Promise((res,rej)=>{ const tx=db.transaction(IDB_STORE,"readwrite"); tx.objectStore(IDB_STORE).delete(k); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); }); }
+  async function idbAll(){ const db=await idbOpen(); return new Promise((res,rej)=>{ const tx=db.transaction(IDB_STORE,"readonly"); const st=tx.objectStore(IDB_STORE); const out={}; const c=st.openCursor(); c.onsuccess=e=>{ const cur=e.target.result; if(cur){ out[cur.key]=cur.value; cur.continue(); } else res(out); }; c.onerror=()=>rej(c.error); }); }
+
+  const photoKey   = id => "photo_"+id;
+  const receiptKey = id => "receipt_"+id;
+  const manualKey  = id => "manual_"+id;
+  const photoOrigKey = id => "photoOrig_"+id;   // capped-res original, kept so photos can be re-adjusted
+  const getPhoto   = id => idbGet(photoKey(id));
+  const setPhoto   = (id,v) => idbSet(photoKey(id),v);
+  const delPhoto   = id => idbDelete(photoKey(id));
+  const getPhotoOrig = id => idbGet(photoOrigKey(id));
+
+  /* ---------- brands ----------
+     The whole app themes itself from data.settings.brand (travels with backups).
+     A preset carries the brand's accent, display name, and its REAL battery-system
+     lineup (ascending power) — systems drive the badges, pips, modal dropdowns and
+     the voltage-grouped view. Greenworks keeps its original hand-tuned palette so
+     the default look is pixel-identical. Custom brands derive a full palette from
+     one base color. applyBrand() injects a <style id="brand-css"> override, swaps
+     the header eyebrow, document title and favicon, and rebuilds system CSS vars. */
+  const BRANDS = {
+    greenworks:{ name:"Greenworks", accent:"#84CC16",
+      palette:{ bright:"#A3E635", deep:"#5E8F0E", ink:"#0E1403", textDark:"#A3E635", textLight:"#4D7C0F" },
+      sysColors:{ "24V":"#D9F99D","40V":"#A3E635","60V":"#84CC16","80V":"#65A30D" },
+      systems:[ {id:"24V",label:"24V",tier:"Compact"},{id:"40V",label:"40V",tier:"Yard & garden"},
+                {id:"60V",label:"60V",tier:"Pro-grade"},{id:"80V",label:"80V",tier:"Max power"} ] },
+    dewalt:{ name:"DeWalt", accent:"#FEBD17",
+      systems:[ {id:"12V",label:"12V MAX",tier:"Compact"},{id:"20V",label:"20V MAX",tier:"Full-size"},{id:"60V",label:"60V FlexVolt",tier:"Max power"} ] },
+    milwaukee:{ name:"Milwaukee", accent:"#DB021D",
+      systems:[ {id:"M12",label:"M12",tier:"Compact"},{id:"M18",label:"M18",tier:"Full-size"},{id:"MX",label:"MX FUEL",tier:"Equipment"} ] },
+    makita:{ name:"Makita", accent:"#1BA2A6",
+      systems:[ {id:"12V",label:"12V CXT",tier:"Compact"},{id:"18V",label:"18V LXT",tier:"Full-size"},{id:"40V",label:"40V XGT",tier:"Max power"} ] },
+    ryobi:{ name:"Ryobi", accent:"#8CC63F",
+      systems:[ {id:"18V",label:"18V ONE+",tier:"Everyday"},{id:"40V",label:"40V",tier:"Yard & garden"},{id:"80V",label:"80V",tier:"Max power"} ] },
+    ego:{ name:"EGO", accent:"#95C11F",
+      systems:[ {id:"56V",label:"56V ARC",tier:"All tools"} ] },
+    stihl:{ name:"Stihl", accent:"#F37A1F",
+      systems:[ {id:"AS",label:"AS System",tier:"Compact"},{id:"AK",label:"AK System",tier:"Homeowner"},{id:"AP",label:"AP System",tier:"Pro"} ] },
+    craftsman:{ name:"Craftsman", accent:"#D6001C",
+      systems:[ {id:"20V",label:"V20",tier:"Full-size"},{id:"60V",label:"V60",tier:"Max power"} ] },
+    flex:{ name:"FLEX", accent:"#9AA3AE",   // gunmetal grey, like the tools (their logo red read too loud here)
+      systems:[ {id:"24V",label:"24V",tier:"All tools"} ] }
+  };
+  function hx(c){ c=String(c).replace("#",""); return [parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)]; }
+  function hex(r,g,b){ return "#"+[r,g,b].map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,"0")).join(""); }
+  function mixc(a,b,t){ const A=hx(a),B=hx(b); return hex(A[0]+(B[0]-A[0])*t, A[1]+(B[1]-A[1])*t, A[2]+(B[2]-A[2])*t); }
+  function lum(c){ const [r,g,b]=hx(c); return (0.299*r+0.587*g+0.114*b)/255; }
+  function rgbaOf(c,a){ const [r,g,b]=hx(c); return `rgba(${r},${g},${b},${a})`; }
+  function cssSafe(s){ return String(s).replace(/[^A-Za-z0-9_-]/g,"-"); }
+  function brandPalette(B){
+    if(B.palette) return B.palette;
+    const a=B.accent, light=lum(a)>0.45;
+    return { bright:mixc(a,"#ffffff",0.22), deep:mixc(a,"#000000",0.28),
+             ink: light?mixc(a,"#000000",0.90):"#FFFFFF",
+             textDark:mixc(a,"#ffffff",0.30), textLight:mixc(a,"#000000",0.42) };
+  }
+  let _brand=null;
+  function currentBrandDef(){
+    const b=data.settings && data.settings.brand;
+    if(b && b.preset==="custom"){
+      const accent=/^#[0-9a-fA-F]{6}$/.test(b.accent||"")?b.accent:"#84CC16";
+      const systems=String(b.systems||"").split(",").map(s=>s.trim()).filter(Boolean).map(s=>({id:s,label:s,tier:""}));
+      return { key:"custom", name:(b.name||"My Tools").trim()||"My Tools", accent,
+               systems: systems.length?systems:[{id:"18V",label:"18V",tier:""}] };
+    }
+    const key=(b && b.preset && BRANDS[b.preset]) ? b.preset : "greenworks";
+    return { key, ...BRANDS[key] };
+  }
+  const brandSystems=()=> _brand ? _brand.systems : BRANDS.greenworks.systems;
+  const sysOf=v=> brandSystems().find(s=>s.id===v);
+  const tierOf=v=> v==="AC" ? "Corded / plug-in" : ((sysOf(v)||{}).tier || "System");
+  function defaultSystem(){ const s=brandSystems(); return s[Math.floor(s.length/2)] ? s[Math.floor(s.length/2)].id : ""; }
+  function applyBrand(){
+    const B=currentBrandDef(), P=brandPalette(B), n=B.systems.length;
+    const tintA=mixc(B.accent,"#ffffff",0.45), tintB=mixc(B.accent,"#000000",0.25);
+    const systems=B.systems.map((s,i)=>({ ...s,
+      color:(B.sysColors && B.sysColors[s.id]) || mixc(tintA,tintB, n<=1?0.5:i/(n-1)) }));
+    _brand={ ...B, systems, palette:P };
+    let css=`:root{ --accent:${B.accent}; --accent-bright:${P.bright}; --accent-deep:${P.deep}; --accent-ink:${P.ink}; --accent-soft:${rgbaOf(B.accent,.14)}; --accent-text:${P.textDark};`;
+    systems.forEach(s=>{ css+=` --sys-${cssSafe(s.id)}:${s.color};`; });
+    css+=` }\nhtml[data-theme="light"]{ --accent-text:${P.textLight}; }\n`;
+    systems.forEach(s=>{
+      css+=`.sys-${cssSafe(s.id)}{ --c:var(--sys-${cssSafe(s.id)}); }\n`;
+      css+=`.sysgroup-head[data-v="${cssSafe(s.id)}"]{ --c:var(--sys-${cssSafe(s.id)}); }\n`;
+    });
+    let tag=document.getElementById("brand-css");
+    if(!tag){ tag=document.createElement("style"); tag.id="brand-css"; document.head.appendChild(tag); }
+    tag.textContent=css;
+    const sub=document.getElementById("brand-sub"); if(sub) sub.textContent=`${B.name} · Personal Inventory`;
+    document.title=`${B.name==="Greenworks"?"Greenworks":B.name} Tool Tracker`;
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0.1" y1="0" x2="0.9" y2="1"><stop offset="0" stop-color="${P.bright}"/><stop offset="1" stop-color="${P.deep}"/></linearGradient></defs><rect x="16" y="16" width="480" height="480" rx="116" fill="url(#g)"/><path d="M13 2 4 13.5h6L9.6 22 20 9.5h-6.4L13 2Z" fill="${P.ink}" transform="translate(64,64) scale(16)"/></svg>`;
+    const uri="data:image/svg+xml;base64,"+btoa(svg);
+    document.querySelectorAll('link[rel="icon"],link[rel="apple-touch-icon"]').forEach(l=>l.href=uri);
+  }
+
+  /* ---------- image resize / compress ---------- */
+  function fileToDataURL(f){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(f); }); }
+  async function resizeImage(file, maxDim=IMG_MAX_DIM, quality=IMG_QUALITY){
+    const dataUrl = await fileToDataURL(file);
+    const img = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=dataUrl; });
+    let w=img.width,h=img.height;
+    if(w>maxDim||h>maxDim){ if(w>h){h=Math.round(h*maxDim/w);w=maxDim;} else {w=Math.round(w*maxDim/h);h=maxDim;} }
+    const c=document.createElement("canvas"); c.width=w; c.height=h;
+    c.getContext("2d").drawImage(img,0,0,w,h);
+    return c.toDataURL("image/jpeg",quality);
+  }
+
+  /* ---------- photo cropper (zoom + pan → 16:10) ---------- */
+  let cropState=null;
+  function buildCropper(){
+    if($("#cropper")) return;
+    const el=document.createElement("div"); el.id="cropper";
+    el.innerHTML=`
+      <div class="crop-panel">
+        <div class="crop-head"><h3>Adjust photo</h3>
+          <button class="x" id="crop-x" type="button" aria-label="Cancel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        </div>
+        <div class="crop-stage" id="crop-stage"><img id="crop-img" alt=""></div>
+        <div class="crop-hint">Drag to reposition · scroll or use the slider to zoom</div>
+        <div class="crop-controls">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M8 11h6"/></svg>
+          <input type="range" id="crop-zoom" min="1" max="4" step="0.01" value="1">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>
+        </div>
+        <div class="crop-foot">
+          <button class="btn" id="crop-replace" type="button">Replace</button>
+          <button class="btn" id="crop-reset" type="button">Reset</button>
+          <span class="spacer"></span>
+          <button class="btn" id="crop-cancel" type="button">Cancel</button>
+          <button class="btn primary" id="crop-apply" type="button">Apply</button>
+        </div>
+        <input type="file" id="crop-file" accept="image/*" style="display:none">
+      </div>`;
+    document.body.appendChild(el);
+    const stage=$("#crop-stage"), zoom=$("#crop-zoom");
+    stage.addEventListener("pointerdown",e=>{ if(!cropState)return; cropState.drag=true; cropState.px=e.clientX; cropState.py=e.clientY; stage.classList.add("moving"); stage.setPointerCapture(e.pointerId); });
+    stage.addEventListener("pointermove",e=>{ if(!cropState||!cropState.drag)return; cropState.x+=e.clientX-cropState.px; cropState.y+=e.clientY-cropState.py; cropState.px=e.clientX; cropState.py=e.clientY; applyCropTransform(); });
+    const endDrag=()=>{ if(cropState){cropState.drag=false;} stage.classList.remove("moving"); };
+    stage.addEventListener("pointerup",endDrag); stage.addEventListener("pointercancel",endDrag);
+    stage.addEventListener("wheel",e=>{ if(!cropState)return; e.preventDefault(); const r=stage.getBoundingClientRect();
+      cropZoomTo(cropState.scale*(e.deltaY<0?1.1:1/1.1), e.clientX-r.left, e.clientY-r.top);
+      zoom.value=(cropState.scale/cropState.cover).toFixed(2); },{passive:false});
+    zoom.addEventListener("input",()=>{ if(!cropState)return; cropZoomTo(cropState.cover*parseFloat(zoom.value), cropState.W/2, cropState.H/2); });
+    $("#crop-reset").addEventListener("click",()=>{ if(!cropState)return; cropState.scale=cropState.cover;
+      cropState.x=(cropState.W-cropState.natW*cropState.cover)/2; cropState.y=(cropState.H-cropState.natH*cropState.cover)/2;
+      zoom.value=1; applyCropTransform(); });
+    $("#crop-apply").addEventListener("click",applyCrop);
+    $("#crop-cancel").addEventListener("click",closeCropper);
+    $("#crop-x").addEventListener("click",closeCropper);
+    $("#crop-replace").addEventListener("click",()=>$("#crop-file").click());
+    $("#crop-file").addEventListener("change", async e=>{ if(!e.target.files[0]) return;
+      const orig=await resizeImage(e.target.files[0],1600,0.82); e.target.value="";
+      if(el._initImage) el._initImage(orig,null); });
+    el.addEventListener("click",e=>{ if(e.target.id==="cropper") closeCropper(); });
+  }
+  function clampCrop(){ const s=cropState; const dw=s.natW*s.scale, dh=s.natH*s.scale;
+    s.x=Math.min(0,Math.max(s.W-dw,s.x)); s.y=Math.min(0,Math.max(s.H-dh,s.y)); }
+  function applyCropTransform(){ clampCrop(); const s=cropState; $("#crop-img").style.transform=`translate(${s.x}px,${s.y}px) scale(${s.scale})`; }
+  function cropZoomTo(ns,fx,fy){ const s=cropState; ns=Math.min(s.max,Math.max(s.min,ns));
+    const sx=(fx-s.x)/s.scale, sy=(fy-s.y)/s.scale; s.x=fx-sx*ns; s.y=fy-sy*ns; s.scale=ns; applyCropTransform(); }
+  function closeCropper(){ const el=$("#cropper"); if(el) el.classList.remove("open"); cropState=null; }
+  function applyCrop(){ const s=cropState; if(!s) return;
+    const srcX=-s.x/s.scale, srcY=-s.y/s.scale, srcW=s.W/s.scale, srcH=s.H/s.scale;
+    const OW=800, OH=500, c=document.createElement("canvas"); c.width=OW; c.height=OH;
+    c.getContext("2d").drawImage($("#crop-img"), srcX,srcY,srcW,srcH, 0,0,OW,OH);
+    const dataUrl=c.toDataURL("image/jpeg",0.72);
+    const rect={ fx:srcX/s.natW, fy:srcY/s.natH, fw:srcW/s.natW, fh:srcH/s.natH };  // normalized crop → survives screen sizes
+    const cb=s.onApply, orig=s.orig; closeCropper(); if(cb) cb({dataUrl,rect,orig});
+  }
+  function openCropper(srcDataURL, initRect, onApply){
+    buildCropper();
+    const el=$("#cropper"), stage=$("#crop-stage"), img=$("#crop-img"), zoom=$("#crop-zoom");
+    const initImage=(dataURL, rect)=>{
+      img.onload=()=>{
+        const W=stage.clientWidth, H=stage.clientHeight, natW=img.naturalWidth, natH=img.naturalHeight;
+        const cover=Math.max(W/natW,H/natH);
+        cropState={onApply, orig:dataURL, W,H,natW,natH,cover,min:cover,max:cover*Math.max(4,natW/W),scale:cover,drag:false,
+          x:(W-natW*cover)/2, y:(H-natH*cover)/2};
+        if(rect && rect.fw){ const sc=W/(rect.fw*natW); cropState.scale=Math.min(cropState.max,Math.max(cropState.min,sc));
+          cropState.x=-rect.fx*natW*cropState.scale; cropState.y=-rect.fy*natH*cropState.scale; }
+        zoom.max=(cropState.max/cover).toFixed(2); zoom.value=(cropState.scale/cover).toFixed(2);
+        applyCropTransform();
+      };
+      img.src=dataURL;
+    };
+    el._initImage=initImage;
+    el.classList.add("open");
+    initImage(srcDataURL, initRect);
+  }
+  function applyPhotoResult(res){
+    if(!modalState) return;
+    modalState.pending.photo=res.dataUrl;
+    modalState.pending.photoOrig=res.orig;
+    modalState.pending.crop=res.rect;
+    const pv=$("#photo-preview"); if(pv) pv.innerHTML=`<img src="${res.dataUrl}" alt="">`;
+  }
+  async function adjustExistingPhoto(){
+    const p=modalState.pending, id=modalState.item.id;
+    let src, rect=modalState.item.crop||null;
+    if(p.photoOrig!==undefined) src=p.photoOrig; else src=await getPhotoOrig(id);
+    if(!src){ if(p.photo!==undefined) src=p.photo; else src=await getPhoto(id); rect=null; }  // older photo w/o stored original
+    if(!src){ const inp=$("#photo-input"); if(inp) inp.click(); return; }
+    openCropper(src, rect, applyPhotoResult);
+  }
+
+  /* ---------- warranty (computed) ----------
+     Runs from the PURCHASE date when set, otherwise falls back to the MFG date.
+     (Greenworks warranty legally starts at purchase; mfg is a safe, slightly-early
+     stand-in when the purchase date is unknown.) */
+  function warrantyStart(x){ return (x && x.date) ? x.date : (x && x.mfg) ? x.mfg : ""; }
+  function wStatus(x){
+    const start = warrantyStart(x);
+    if(!start || !x || x.warranty_years==null || x.warranty_years==="") return "gray";
+    const p=new Date(start+"T00:00:00"); if(isNaN(p)) return "gray";
+    const exp=new Date(p); exp.setFullYear(exp.getFullYear()+Number(x.warranty_years));
+    const ms=exp-new Date();
+    if(ms<=0) return "red";
+    if(ms/(1000*60*60*24*30.44) < 6) return "yellow";
+    return "green";
+  }
+  function wExpiry(x){
+    const start = warrantyStart(x);
+    if(!start || x.warranty_years==null || x.warranty_years==="") return null;
+    const p=new Date(start+"T00:00:00"); if(isNaN(p)) return null;
+    const exp=new Date(p); exp.setFullYear(exp.getFullYear()+Number(x.warranty_years));
+    return exp.toISOString().slice(0,10);
+  }
+
+  /* ---------- collections / helpers ---------- */
+  function dataFor(tab){ return tab==="batteries"?data.batteries : tab==="wishlist"?data.wishlist : data.tools; }
+  function itemById(id){ return data.tools.find(o=>o.id===id) || data.batteries.find(o=>o.id===id) || data.wishlist.find(o=>o.id===id) || null; }
+  function vnum(v){ if(v==="AC") return -1; const i=brandSystems().findIndex(s=>s.id===v); return i<0 ? -0.5 : i; }  // lineup position; AC last, legacy between
+
+  function filterSort(list){
+    const q = ui.q.trim().toLowerCase();
+    let r = list.filter(x => !q || ((x.name||"")+" "+(x.model||"")+" "+(x.serial||"")+" "+(x.store||"")+" "+(x.v||"")).toLowerCase().includes(q));
+    const wo={green:0,yellow:1,red:2,gray:3}, po={high:0,med:1,low:2};
+    const so={
+      name:(a,b)=>(a.name||"").localeCompare(b.name||""),
+      voltage:(a,b)=>vnum(b.v)-vnum(a.v),
+      capacity:(a,b)=>(parseFloat(b.capacity)||0)-(parseFloat(a.capacity)||0),
+      priority:(a,b)=>(po[a.priority||'med'])-(po[b.priority||'med']),
+      warranty:(a,b)=>wo[wStatus(a)]-wo[wStatus(b)]
+    };
+    return r.sort(so[ui.sort]||so.name);
+  }
+
+  /* ---------- card / grid rendering ---------- */
+  function thumbHTML(x,isBatt){
+    return `<div class="thumb ph" data-photo-id="${x.id}">
+        ${ico(isBatt?'battery':(x.icon||'tool'))}
+        <div class="badge-float">${sysBadge(x.v)}</div>
+        <div class="pill-float">${pill(wStatus(x))}</div>
+      </div>`;
+  }
+  function cardHTML(x,isBatt,i){
+    const maintCount = (x.maint&&x.maint.length)||0;
+    return `<article class="card${cardsAnimate?' in':''}" style="--i:${i||0}" data-open="${x.id}" data-id="${x.id}">
+      ${thumbHTML(x,isBatt)}
+      <div class="card-body">
+        <h3 class="card-name">${esc(x.name)}</h3>
+        <div class="card-model">${x.model?`<span class="spec"><span class="spec-k">Model</span><span class="spec-v">${esc(x.model)}</span></span>`:''}${x.serial?`<span class="spec"><span class="spec-k">S/N</span><span class="spec-v">${esc(x.serial)}</span></span>`:''}</div>
+        <div class="meta">
+          <div class="m"><span class="k">Purchased</span><span class="v">${fmtDate(x.date)}</span></div>
+        </div>
+        <div class="card-foot">
+          ${maintCount?`<span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14.7 6.3 3 3M3 21l3.5-1 11-11a2.1 2.1 0 0 0-3-3l-11 11L3 21Z"/></svg>${maintCount} log ${maintCount>1?'entries':'entry'}</span>`:''}
+          ${x.notes?`<span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Notes</span>`:''}
+        </div>
+      </div>
+    </article>`;
+  }
+
+  function renderGrid(isBatt){
+    const list = filterSort(dataFor(isBatt?"batteries":"tools"));
+    if(!list.length) return emptyHTML(isBatt?"batteries":"tools");
+    if(ui.sort==="voltage") return renderGrouped(list, isBatt);
+    if(ui.sort==="capacity") return renderGroupedC(list, isBatt);
+    if(ui.sort==="warranty") return renderGroupedW(list, isBatt);
+    return `<div class="grid">${list.map((x,i)=>cardHTML(x,isBatt,i)).join("")}</div>`;
+  }
+  function renderGroupedC(list, isBatt){
+    const caps=[...new Set(list.map(x=>x.capacity!=null&&x.capacity!==""?Number(x.capacity):null))]
+      .sort((a,b)=>(b==null?-1:b)-(a==null?-1:a));
+    let gi=0, html="";
+    caps.forEach(c=>{
+      const items=list.filter(x=>{ const xc=(x.capacity!=null&&x.capacity!=="")?Number(x.capacity):null; return xc===c; })
+        .sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+      if(!items.length) return;
+      const pct=list.length?Math.round(items.length/list.length*100):0;
+      const energy=items.reduce((s,x)=>s+(Number(x.energy)||0),0);
+      const label=c==null?'—':c.toFixed(1);
+      html+=`<section class="sysgroup">
+        <div class="sysgroup-head cap-head">
+          <span class="vnum">${label}<span class="vu">Ah</span></span>
+          <div class="vmid">
+            <span class="vtier">${c==null?'Capacity not set':'Capacity tier'}</span>
+            <span class="vchg" title="${pct}% of your batteries"><span style="width:${pct}%"></span></span>
+          </div>
+          <span class="vmeta"><span>Batteries <b>${items.length}</b></span>${energy?`<span>Energy <b>${Math.round(energy)} Wh</b></span>`:''}</span>
+        </div>
+        <div class="grid">${items.map(x=>cardHTML(x,isBatt,gi++)).join("")}</div>
+      </section>`;
+    });
+    return html;
+  }
+  function renderGroupedW(list, isBatt){
+    let gi=0, html="";
+    WORDER.forEach(w=>{
+      const items=list.filter(x=>wStatus(x)===w).sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+      if(!items.length) return;
+      const total=items.reduce((s,x)=>s+(Number(x.price)||0),0);
+      const pct=list.length?Math.round(items.length/list.length*100):0;
+      html+=`<section class="sysgroup">
+        <div class="sysgroup-head" data-w="${w}">
+          <span class="wlabel">${WTITLE[w]}</span>
+          <div class="vmid">
+            <span class="vtier">${WSUB[w]}</span>
+            <span class="vchg" title="${pct}% of your ${isBatt?'batteries':'tools'}"><span style="width:${pct}%"></span></span>
+          </div>
+          <span class="vmeta"><span>${isBatt?'Batteries':'Tools'} <b>${items.length}</b></span><span>Invested <b>${money(total)}</b></span></span>
+        </div>
+        <div class="grid">${items.map(x=>cardHTML(x,isBatt,gi++)).join("")}</div>
+      </section>`;
+    });
+    return html;
+  }
+  function renderGrouped(list, isBatt){
+    const known=brandSystems().map(s=>s.id);
+    const extras=[...new Set(list.map(x=>x.v).filter(v=>v && v!=="AC" && !known.includes(v)))]; // legacy systems from another brand still get a group
+    const order=[...known].reverse().concat(extras,["AC"]);
+    let gi=0, html="";
+    order.forEach(v=>{
+      const items=list.filter(x=>x.v===v).sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+      if(!items.length) return;
+      const total=items.reduce((s,x)=>s+(Number(x.price)||0),0);
+      const pct=list.length?Math.round(items.length/list.length*100):0;
+      const isAC = v==="AC";
+      const vm = !isAC && v.match(/^(\d+(?:\.\d+)?)V$/);   // "80V" → big number + small V; "M18"/"AP" → shown as-is
+      html+=`<section class="sysgroup">
+        <div class="sysgroup-head" data-v="${cssSafe(v)}">
+          <span class="vnum">${isAC?'AC': vm? vm[1]+'<span class="vu">V</span>' : esc(v)}</span>
+          <div class="vmid">
+            <span class="vtier">${esc(tierOf(v))}</span>
+            <span class="vchg" title="${pct}% of your ${isBatt?'batteries':'tools'}"><span style="width:${pct}%"></span></span>
+          </div>
+          <span class="vmeta"><span>${isBatt?'Batteries':'Tools'} <b>${items.length}</b></span><span>Invested <b>${money(total)}</b></span></span>
+        </div>
+        <div class="grid">${items.map(x=>cardHTML(x,isBatt,gi++)).join("")}</div>
+      </section>`;
+    });
+    return html;
+  }
+
+  /* ---------- wishlist ---------- */
+  function wishRowHTML(x,i){
+    const host = x.url ? hostOf(x.url) : "";
+    const p = x.priority || "med";
+    const sub = [x.store?esc(x.store):"", host?esc(host):"", x.target?("Target "+fmtDate(x.target)):""]
+      .filter(Boolean).join(' <span class="sep">·</span> ');
+    return `<div class="wishrow${cardsAnimate?' in':''}" style="--i:${i||0}" data-open="${x.id}" data-id="${x.id}">
+      <span class="wr-tile ${p}">${ico('tag')}</span>
+      <div class="wr-main">
+        <div class="wr-name">${esc(x.name)}</div>
+        <div class="wr-sub">${sub||'Wishlist'}</div>
+      </div>
+      <div class="wr-right">
+        ${x.v?sysBadge(x.v):''}
+        ${prioChip(p)}
+        <span class="wr-price">${x.price?money(x.price):'—'}<small>Est.</small></span>
+        <button class="wr-acq" data-acquire="${x.id}" title="Move to inventory" aria-label="Move to inventory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/><path d="M12 3v11m0 0 4-4m-4 4-4-4"/></svg></button>
+        ${x.url?`<a class="wr-link" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer" data-extlink title="View on site" aria-label="View on site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>`:''}
+      </div>
+    </div>`;
+  }
+  function renderWishlist(){
+    const list = filterSort(data.wishlist);
+    if(!list.length) return `<div class="empty">${ico('tag')}<h3>${ui.q?'No matches':'Your wishlist is empty'}</h3><p>${ui.q?'Try a different search.':'Tap “Add item” to save tools and batteries you want next.'}</p></div>`;
+    return list.map((x,i)=>wishRowHTML(x,i)).join("");
+  }
+  function emptyHTML(tab){
+    return `<div class="empty">
+      ${ico(tab==="batteries"?'battery':'tool')}
+      <h3>${ui.q?'No matches':'Nothing here yet'}</h3>
+      <p>${ui.q?'Try a different search.':'Tap “Add” to log your first '+(tab==="batteries"?'battery':'tool')+'.'}</p>
+    </div>`;
+  }
+
+  /* ---------- settings ---------- */
+  function renderSettings(){
+    const cb = data.settings.brand || {};
+    const curBrandKey = (cb.preset && (BRANDS[cb.preset] || cb.preset==="custom")) ? cb.preset : "greenworks";
+    const items = data.tools.length+data.batteries.length;
+    const value = [...data.tools,...data.batteries].reduce((s,x)=>s+(Number(x.price)||0),0);
+    const covered = [...data.tools,...data.batteries].filter(x=>wStatus(x)==="green").length;
+    return `<div class="settings">
+      <div class="scard">
+        <h2>Inventory summary</h2>
+        <p>A snapshot of everything you're tracking.</p>
+        <div class="kv"><span class="k">Total items</span><span class="v">${items}</span></div>
+        <div class="kv"><span class="k">Tools</span><span class="v">${data.tools.length}</span></div>
+        <div class="kv"><span class="k">Batteries</span><span class="v">${data.batteries.length}</span></div>
+        <div class="kv"><span class="k">Total invested</span><span class="v">${money(value)}</span></div>
+        <div class="kv"><span class="k">Under warranty</span><span class="v">${covered}</span></div>
+        <div class="kv"><span class="k">On wishlist</span><span class="v">${data.wishlist.length}</span></div>
+      </div>
+      <div class="scard">
+        <h2>Brand</h2>
+        <p>Theme the whole app — colors, name, favicon and battery systems — for the tool brand you own. Travels with backups.</p>
+        <div class="row"><select class="inp" id="brand-select" style="max-width:240px">${
+          Object.entries(BRANDS).map(([k,b])=>`<option value="${k}" ${k===curBrandKey?'selected':''}>${b.name}</option>`).join("")
+        }<option value="custom" ${curBrandKey==="custom"?'selected':''}>Custom…</option></select></div>
+        <div id="brand-custom" style="display:${curBrandKey==="custom"?'block':'none'};margin-top:12px">
+          <div class="form-grid">
+            <div><label class="flbl">Brand name</label><input class="inp" id="brand-name" value="${esc(cb.name||'')}" placeholder="e.g. FLEX"></div>
+            <div><label class="flbl">Accent color</label><input class="inp" id="brand-color" type="color" value="${/^#[0-9a-fA-F]{6}$/.test(cb.accent||'')?cb.accent:'#84CC16'}" style="height:42px;padding:4px"></div>
+            <div class="fg-full"><label class="flbl">Battery systems — comma-separated, weakest first</label><input class="inp" id="brand-systems" value="${esc(cb.systems||'')}" placeholder="e.g. 12V, 24V"></div>
+          </div>
+          <div class="row" style="margin-top:12px"><button class="btn primary" id="brand-apply">Apply custom brand</button></div>
+        </div>
+      </div>
+      <div class="scard">
+        <h2>Backup &amp; restore</h2>
+        <p>Export a single file containing everything — tools, batteries, wishlist, and all photos, receipts &amp; manuals. Import replaces everything on this device.</p>
+        <div class="row">
+          <button class="btn primary" id="export-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            Export backup
+          </button>
+          <button class="btn" id="import-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m0 0 4 4m-4-4L8 7M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            Import backup
+          </button>
+          <input type="file" id="import-file" accept="application/json" style="display:none">
+        </div>
+        <div class="bk-folder" id="bk-folder"></div>
+      </div>
+      <div class="scard">
+        <h2>Import purchase info</h2>
+        <p>Bulk-fill order dates and prices from a filled-in CSV (matched by ID, or serial). Only those two fields change — everything else is left alone, and warranty recalculates from the new dates.</p>
+        <div class="row">
+          <button class="btn" id="purch-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m0 0 4 4m-4-4L8 7M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            Import purchase CSV
+          </button>
+          <input type="file" id="purch-file" accept=".csv,text/csv" style="display:none">
+        </div>
+      </div>
+      <div class="scard danger-zone">
+        <h2>Danger zone</h2>
+        <p>Permanently delete all tools, batteries, photos and logs from this device. This cannot be undone.</p>
+        <div class="row">
+          <button class="btn danger" id="clear-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14M10 11v6M14 11v6"/></svg>
+            Clear everything
+          </button>
+        </div>
+      </div>
+      <p style="margin:12px 4px 0;color:var(--muted);font-size:var(--t-2xs);text-transform:uppercase;letter-spacing:.12em">Tool Tracker · v${APP_VERSION}</p>
+    </div>`;
+  }
+
+  /* ---------- main render ---------- */
+  function render(animate){
+    cardsAnimate = !!animate;
+    const view = $("#view");
+    const capOpt  = $("#sort option[value='capacity']");
+    const prioOpt = $("#sort option[value='priority']");
+    const warrOpt = $("#sort option[value='warranty']");
+    const voltOpt = $("#sort option[value='voltage']");
+    const isWishTab = ui.tab==="wishlist";
+    if(capOpt)  capOpt.hidden  = ui.tab!=="batteries";
+    if(prioOpt) prioOpt.hidden = !isWishTab;
+    if(warrOpt) warrOpt.hidden = isWishTab;   // wishlist has no warranty
+    if(voltOpt) voltOpt.hidden = isWishTab;   // wishlist groups by priority instead
+    if(ui.sort==="capacity" && ui.tab!=="batteries") ui.sort="name";
+    if(ui.sort==="priority" && !isWishTab) ui.sort="name";
+    if((ui.sort==="warranty"||ui.sort==="voltage") && isWishTab) ui.sort="name";
+    $("#sort").value = ui.sort;
+    syncSortUI();
+
+    const tb = $("#toolbar");
+    tb.style.display = ui.tab==="settings" ? "none" : "flex";
+    $("#add-label").textContent = ui.tab==="batteries" ? "Add battery" : isWishTab ? "Add item" : "Add tool";
+    $("#search").placeholder = isWishTab ? "Search your wishlist…" : "Search tools, models, serials…";
+
+    if(ui.tab==="tools") view.innerHTML = renderGrid(false);
+    else if(ui.tab==="batteries") view.innerHTML = renderGrid(true);
+    else if(ui.tab==="wishlist") view.innerHTML = renderWishlist();
+    else { view.innerHTML = renderSettings(); refreshBackupFolderUI(); }
+
+    refreshStats(false);
+    $("#c-tools").textContent = data.tools.length;
+    $("#c-batteries").textContent = data.batteries.length;
+    $("#c-wishlist").textContent = data.wishlist.length;
+    loadThumbs();
+  }
+  function refreshStats(animate){
+    const all=[...data.tools,...data.batteries];
+    const items=all.length, val=all.reduce((s,x)=>s+(Number(x.price)||0),0), cov=all.filter(x=>wStatus(x)==="green").length;
+    if(animate){
+      rampNumber($("#stat-items"), items, v=>v);
+      rampNumber($("#stat-value"), val, v=>money(v));
+      rampNumber($("#stat-warranty"), cov, v=>v);
+    }else{
+      $("#stat-items").textContent=items; $("#stat-value").textContent=money(val); $("#stat-warranty").textContent=cov;
+    }
+  }
+  function rampNumber(el,to,fmt,dur=950){
+    if(!el) return; const start=performance.now(); let done=false;
+    function step(t){ if(done) return; const k=Math.min(1,(t-start)/dur); const e=1-Math.pow(1-k,3);
+      el.textContent=fmt(Math.round(to*e)); if(k<1) requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+    setTimeout(()=>{ done=true; el.textContent=fmt(to); }, dur+150);
+  }
+  // load photos from IndexedDB into any rendered thumbs (grid + modal)
+  async function loadThumbs(){
+    for(const n of $$(".thumb[data-photo-id]")){
+      const url = await getPhoto(n.dataset.photoId);
+      if(url){ const svg=n.querySelector(":scope > svg"); if(svg) svg.remove(); n.classList.remove("ph");
+        if(!n.querySelector("img")){ const img=new Image(); img.src=url; img.alt=""; n.prepend(img); } }
+    }
+  }
+
+  /* ============================================================
+     MODAL  (detail / add / edit)
+     ============================================================ */
+  function kindOf(id){
+    if(data.batteries.find(b=>b.id===id)) return "battery";
+    if(data.wishlist.find(w=>w.id===id)) return "wishlist";
+    if(data.tools.find(t=>t.id===id)) return "tool";
+    return ui.tab==="batteries"?"battery":ui.tab==="wishlist"?"wishlist":"tool";
+  }
+  function blank(kind){
+    const id=uuid();
+    if(kind==="wishlist") return {id,name:"",v:"",price:"",priority:"med",url:"",store:"",target:"",notes:"",icon:"tag"};
+    if(kind==="battery")  return {id,name:"",model:"",serial:"",v:defaultSystem(),date:"",price:"",warranty_years:DEFAULT_WARRANTY,capacity:"",energy:"",nominal:"",chemistry:"",mfg:"",notes:"",receipt:null,manual:null,icon:"battery"};
+    return {id,name:"",model:"",serial:"",v:defaultSystem(),date:"",price:"",warranty_years:DEFAULT_WARRANTY,mfg:"",compat:"",notes:"",receipt:null,manual:null,maint:[],icon:"tool"};
+  }
+  // effective file metadata = pending change (if any) else the saved record
+  function receiptMeta(){ const p=modalState.pending.receipt; return p!==undefined ? p : (modalState.item.receipt||null); }
+  function manualMeta(){  const p=modalState.pending.manual;  return p!==undefined ? p : (modalState.item.manual||null); }
+
+  function openModal(id){
+    const kind = kindOf(id);
+    const isBatt = kind==="battery", isWish = kind==="wishlist";
+    const src = isWish?data.wishlist:(isBatt?data.batteries:data.tools);
+    const existing = src.find(o=>o.id===id);
+    const item = existing ? structuredClone(existing) : blank(kind);
+    if(kind==="tool" && !Array.isArray(item.maint)) item.maint=[];
+    modalState = { kind, isBatt, isWish, isNew:!existing, item, pending:{ photo:undefined, photoOrig:undefined, crop:undefined, receipt:undefined, manual:undefined } };
+
+    const sysIds = brandSystems().map(s=>s.id);
+    let volts = isBatt ? sysIds : sysIds.concat(["AC"]);
+    if(item.v && !volts.includes(item.v)) volts=[item.v,...volts];   // keep a legacy value selectable after a brand switch
+    const vLabel = v => v==="AC" ? "Corded / AC" : ((sysOf(v)||{}).label || v);
+    const vOpts = (isWish?['<option value="">— none —</option>']:[]).concat(
+      volts.map(v=>`<option value="${esc(v)}" ${v===item.v?'selected':''}>${esc(vLabel(v))}</option>`)).join("");
+    const pOpts = [["high","High"],["med","Medium"],["low","Low"]]
+      .map(([k,l])=>`<option value="${k}" ${k===(item.priority||'med')?'selected':''}>${l}</option>`).join("");
+
+    const batterySpecs = `
+          <div class="fg-sub">Battery specs</div>
+          <div><label class="flbl">Capacity (Ah)</label><input class="inp mono" type="number" step="0.1" data-k="capacity" value="${item.capacity!=null?item.capacity:''}" placeholder="e.g. 4.0"></div>
+          <div><label class="flbl">Energy (Wh)</label><input class="inp mono" type="number" step="0.1" data-k="energy" value="${item.energy!=null?item.energy:''}" placeholder="e.g. 146"></div>
+          <div><label class="flbl">Nominal voltage</label><input class="inp mono" data-k="nominal" value="${esc(item.nominal||'')}" placeholder="e.g. 21.6V (24V MAX)"></div>
+          <div><label class="flbl">Chemistry</label><input class="inp" data-k="chemistry" value="${esc(item.chemistry||'')}" placeholder="Li-ion"></div>
+          <div class="fg-full"><label class="flbl">Mfg date</label><input class="inp" type="date" data-k="mfg" value="${esc(item.mfg||'')}"></div>`;
+    const toolSpecs = `
+          <div class="fg-sub">Tool specs</div>
+          <div><label class="flbl">Mfg date</label><input class="inp" type="date" data-k="mfg" value="${esc(item.mfg||'')}"></div>
+          <div><label class="flbl">Battery compatibility</label><input class="inp mono" data-k="compat" value="${esc(item.compat||'')}" placeholder="e.g. BAG711 / 29462"></div>`;
+
+    const warrantyField = `<div><label class="flbl">Warranty (years)</label><input class="inp mono" type="number" min="0" step="1" data-k="warranty_years" value="${item.warranty_years!=null?item.warranty_years:''}" placeholder="${DEFAULT_WARRANTY}"></div>`;
+
+    const fields = isWish ? `
+          <div class="fg-full"><label class="flbl">Item name</label><input class="inp" data-k="name" value="${esc(item.name)}" placeholder="e.g. 60V Pole Saw Attachment"></div>
+          <div class="fg-full"><label class="flbl">Product link</label><input class="inp" data-k="url" value="${esc(item.url||'')}" placeholder="https://greenworkstools.com/…"></div>
+          <div><label class="flbl">Retailer / store</label><input class="inp" data-k="store" value="${esc(item.store||'')}" placeholder="Greenworks, Amazon…"></div>
+          <div><label class="flbl">Battery system</label><select class="inp" data-k="v">${vOpts}</select></div>
+          <div><label class="flbl">Est. price ($)</label><input class="inp mono" type="number" data-k="price" value="${item.price||''}"></div>
+          <div><label class="flbl">Priority</label><select class="inp" data-k="priority">${pOpts}</select></div>
+          <div class="fg-full"><label class="flbl">Target date</label><input class="inp" type="date" data-k="target" value="${esc(item.target||'')}"></div>
+          <div class="fg-full"><label class="flbl">Notes</label><textarea class="inp" data-k="notes" placeholder="Why you want it, deal to watch for, compatible kit…">${esc(item.notes)}</textarea></div>` : `
+          <div class="fg-full"><label class="flbl">Name</label><input class="inp" data-k="name" value="${esc(item.name)}" placeholder="${isBatt?'e.g. 60V 4.0Ah Battery':'e.g. 60V Chainsaw'}"></div>
+          <div><label class="flbl">Model</label><input class="inp" data-k="model" value="${esc(item.model)}"></div>
+          <div><label class="flbl">Serial</label><input class="inp mono" data-k="serial" value="${esc(item.serial)}"></div>
+          <div><label class="flbl">Battery system</label><select class="inp" data-k="v">${vOpts}</select></div>
+          ${warrantyField}
+          <div><label class="flbl">Purchase date</label><input class="inp" type="date" data-k="date" value="${esc(item.date)}"></div>
+          <div><label class="flbl">Price paid ($)</label><input class="inp mono" type="number" data-k="price" value="${item.price||''}"></div>
+          <div class="fg-full"><label class="flbl">Receipt / proof of purchase</label>${receiptHTML()}<input type="file" id="receipt-input" accept="image/*,application/pdf,.pdf" style="display:none"></div>
+          <div class="fg-full"><label class="flbl">Owner's manual (PDF)</label>${manualHTML()}<input type="file" id="manual-input" accept="application/pdf,.pdf" style="display:none"></div>
+          ${isBatt?batterySpecs:toolSpecs}
+          <div class="fg-full"><label class="flbl">Notes</label><textarea class="inp" data-k="notes" placeholder="Storage location, accessories, condition…">${esc(item.notes)}</textarea></div>`;
+
+    const subLine = isWish ? `${esc(item.store)||'Wishlist'}${item.url?' · '+esc(hostOf(item.url)):''}` : `${esc(item.model)||'—'} · ${esc(item.serial)||'no serial'}`;
+    const newTitle = isWish?'New wishlist item':isBatt?'New battery':'New tool';
+    const saveLabel = isWish?'item':(isBatt?'battery':'tool');
+
+    const photoBlock = isWish ? "" : `<label id="photo-preview" data-photo-id="${item.id}">
+          <span class="ph-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="m4 18 5-4 4 3 3-2 4 3"/></svg>Tap to add a photo</span>
+        </label>
+        <input type="file" id="photo-input" accept="image/*">`;
+
+    $("#modal").innerHTML = `
+      <div class="m-head">
+        <div class="m-title">
+          <h2>${esc(item.name)||newTitle}</h2>
+          <div class="m-sub">${subLine}</div>
+        </div>
+        <button data-close aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <div class="m-body">
+        ${photoBlock}
+        <div class="form-grid">${fields}</div>
+        ${kind==="tool"?maintHTML(item):''}
+      </div>
+      <div class="m-foot">
+        ${existing?`<button class="btn danger" data-del="${item.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14"/></svg>Delete</button>`:''}
+        ${(isWish && existing)?`<button class="btn acq" data-acquire="${item.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/><path d="M12 3v11m0 0 4-4m-4 4-4-4"/></svg>Move to inventory</button>`:''}
+        <span class="spacer"></span>
+        <button class="btn" data-close>Cancel</button>
+        <button class="btn primary" data-save="${item.id}">Save ${saveLabel}</button>
+      </div>`;
+    $("#modal-bg").classList.add("open");
+    document.body.style.overflow="hidden";
+    loadModalPhoto();
+  }
+
+  async function loadModalPhoto(){
+    const pv=$("#photo-preview"); if(!pv) return;
+    const eff=modalState.pending.photo;
+    let url = eff!==undefined ? eff : await getPhoto(modalState.item.id);
+    if(url) pv.innerHTML=`<img src="${url}" alt="">`;
+  }
+
+  function maintHTML(x){
+    const arr=x.maint||[];
+    const logs=arr.map((m,idx)=>({m,idx})).sort((a,b)=>(b.m.d||"").localeCompare(a.m.d||""));
+    return `<div class="maint" id="maint-host">
+      <h3>Maintenance log <span class="ct">${arr.length}</span></h3>
+      ${logs.length?logs.map(({m,idx})=>`<div class="mlog"><span class="md">${fmtDate(m.d)}</span><span class="mtxt">${esc(m.t)}</span><button data-delmaint="${idx}" aria-label="Delete entry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`).join(""):`<p style="color:var(--muted);font-size:13px;margin:4px 0 0">No maintenance logged yet.</p>`}
+      <div class="mlog-add">
+        <input class="inp" type="date" id="maint-date" value="${todayISO()}">
+        <input class="inp" id="maint-desc" placeholder="What did you do?">
+        <button class="btn" type="button" id="maint-add">Add</button>
+      </div>
+    </div>`;
+  }
+  function refreshMaint(){ const h=$("#maint-host"); if(h) h.outerHTML=maintHTML(modalState.item); }
+  function addMaint(){
+    const d=$("#maint-date").value || todayISO();
+    const t=($("#maint-desc").value||"").trim();
+    if(!t) return;
+    modalState.item.maint.push({d,t});
+    refreshMaint();
+  }
+
+  /* ---------- receipt / manual slots ---------- */
+  const PDF_ICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>';
+  const RC_ICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v18l2-1 2 1 2-1 2 1 2-1 2 1V3l-2 1-2-1-2 1-2-1-2 1-2-1Z"/><path d="M8 8.5h8M8 12h8M8 15.5h5"/></svg>';
+  const DL_ICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14"/></svg>';
+  const X_ICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+  function manualHTML(){
+    const m = manualMeta(); const id = modalState.item.id;
+    if(m && m.name){
+      return `<div class="manual-slot has" data-manual-id="${id}">
+        <div class="mf-open" data-manual-view="${id}" title="View manual">
+          <span class="mf-ico">${PDF_ICO}</span>
+          <span class="mf-meta"><span class="mf-name">${esc(m.name)}</span><span class="mf-sub">PDF${m.size?' · '+esc(m.size):''} · tap to view</span></span>
+        </div>
+        <button type="button" class="mf-act" data-manual-dl="${id}" title="Download" aria-label="Download manual">${DL_ICO}</button>
+        <button type="button" class="mf-act" data-manual-del="${id}" title="Remove" aria-label="Remove manual">${X_ICO}</button>
+      </div>`;
+    }
+    return `<label class="manual-slot empty" data-manual-id="${id}" for="manual-input">
+      <span class="mf-ico">${PDF_ICO}</span>
+      <span class="mf-meta"><span class="mf-name">Add manual PDF</span><span class="mf-sub">Click to upload · saved to this device</span></span>
+    </label>`;
+  }
+  function receiptHTML(){
+    const m = receiptMeta(); const id = modalState.item.id;
+    if(m && m.name){
+      return `<div class="manual-slot has" data-receipt-id="${id}">
+        <div class="mf-open" data-receipt-view="${id}" title="View receipt">
+          <span class="mf-ico">${RC_ICO}</span>
+          <span class="mf-meta"><span class="mf-name">${esc(m.name)}</span><span class="mf-sub">${m.isImg?'Image':'PDF'}${m.size?' · '+esc(m.size):''} · tap to view</span></span>
+        </div>
+        <button type="button" class="mf-act" data-receipt-dl="${id}" title="Download" aria-label="Download receipt">${DL_ICO}</button>
+        <button type="button" class="mf-act" data-receipt-del="${id}" title="Remove" aria-label="Remove receipt">${X_ICO}</button>
+      </div>`;
+    }
+    return `<label class="manual-slot empty" data-receipt-id="${id}" for="receipt-input">
+      <span class="mf-ico">${RC_ICO}</span>
+      <span class="mf-meta"><span class="mf-name">Add receipt</span><span class="mf-sub">Image or PDF · saved to this device</span></span>
+    </label>`;
+  }
+  function refreshManual(){ const s=$("#modal [data-manual-id]"); if(s) s.outerHTML=manualHTML(); }
+  function refreshReceipt(){ const s=$("#modal [data-receipt-id]"); if(s) s.outerHTML=receiptHTML(); }
+
+  async function downloadFileFor(kind,id){
+    const isRcpt = kind==="receipt";
+    const pending = isRcpt ? modalState && modalState.pending.receipt : modalState && modalState.pending.manual;
+    let dataURL, name;
+    if(modalState && modalState.item.id===id && pending!==undefined && pending){ dataURL=pending.dataURL; name=pending.name; }
+    else { dataURL = await idbGet((isRcpt?receiptKey:manualKey)(id)); const rec=itemById(id)||{}; name=((isRcpt?rec.receipt:rec.manual)||{}).name || (isRcpt?"receipt":"manual.pdf"); }
+    if(!dataURL) return;
+    const a=document.createElement("a"); a.href=dataURL; a.download=name||"file"; document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  function closeModal(){ $("#modal-bg").classList.remove("open"); document.body.style.overflow=""; modalState=null; }
+
+  /* ---------- document viewer (manual PDF / receipt) ---------- */
+  const PV={ zoom:1, min:0.4, max:4 };
+  function pvApplyZoom(z){
+    PV.zoom=Math.min(PV.max,Math.max(PV.min,z));
+    const c=$("#pv-body .pv-canvas"); if(c) c.style.transform=`scale(${PV.zoom})`;
+    const l=$("#pv-lvl"); if(l) l.textContent=Math.round(PV.zoom*100)+"%";
+  }
+  function buildPdfViewer(){
+    if($("#pdfview")) return;
+    const el=document.createElement("div"); el.id="pdfview";
+    el.innerHTML=`<div class="pv-panel">
+      <div class="pv-head">
+        <span class="pv-ico" id="pv-ico"></span>
+        <span class="pv-titles"><h3 id="pv-title">Document</h3><span class="pv-sub" id="pv-sub"></span></span>
+        <div class="pv-zoom">
+          <button class="zb" id="pv-out" type="button" aria-label="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+          <button class="lvl" id="pv-lvl" type="button" title="Reset zoom">100%</button>
+          <button class="zb" id="pv-in" type="button" aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+        <div class="pv-actions">
+          <a class="icon" id="pv-tab" target="_blank" rel="noopener" title="Open in new tab" aria-label="Open in new tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          <a class="icon" id="pv-download" download title="Download" aria-label="Download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14"/></svg></a>
+          <button class="x" id="pv-x" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        </div>
+      </div>
+      <div id="pv-body"></div>
+      <div class="pv-hint">Scroll to pan · Ctrl/⌘ + scroll or + / – to zoom · drag to move</div>
+    </div>`;
+    document.body.appendChild(el);
+    $("#pv-x").addEventListener("click",closePdfViewer);
+    el.addEventListener("click",e=>{ if(e.target.id==="pdfview") closePdfViewer(); });
+    $("#pv-in").addEventListener("click",()=>pvApplyZoom(PV.zoom+0.25));
+    $("#pv-out").addEventListener("click",()=>pvApplyZoom(PV.zoom-0.25));
+    $("#pv-lvl").addEventListener("click",()=>pvApplyZoom(1));
+    const body=$("#pv-body");
+    body.addEventListener("wheel",e=>{ if(e.ctrlKey||e.metaKey){ e.preventDefault(); pvApplyZoom(PV.zoom+(e.deltaY<0?0.15:-0.15)); } },{passive:false});
+    let pan=null;
+    body.addEventListener("mousedown",e=>{ if(e.target.closest("iframe")) return;
+      pan={x:e.clientX,y:e.clientY,sl:body.scrollLeft,st:body.scrollTop}; body.classList.add("grabbing"); e.preventDefault(); });
+    document.addEventListener("mousemove",e=>{ if(!pan) return;
+      body.scrollLeft=pan.sl-(e.clientX-pan.x); body.scrollTop=pan.st-(e.clientY-pan.y); });
+    document.addEventListener("mouseup",()=>{ pan=null; body.classList.remove("grabbing"); });
+    document.addEventListener("keydown",e=>{
+      if(!el.classList.contains("open")) return;
+      if(e.key==="+"||e.key==="="){ e.preventDefault(); pvApplyZoom(PV.zoom+0.25); }
+      else if(e.key==="-"||e.key==="_"){ e.preventDefault(); pvApplyZoom(PV.zoom-0.25); }
+      else if(e.key==="0"){ e.preventDefault(); pvApplyZoom(1); }
+    });
+  }
+  function closePdfViewer(){ const el=$("#pdfview"); if(!el) return; el.classList.remove("open");
+    const body=$("#pv-body"); if(body) body.innerHTML=""; if(el._blobUrl){ URL.revokeObjectURL(el._blobUrl); el._blobUrl=null; } }
+  const PV_PDF_ICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>';
+  const PV_IMG_ICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2"/><path d="m4 18 5-4 4 3 3-2 4 3"/></svg>';
+  async function openDocViewer(dataURL, name, isPdf){
+    buildPdfViewer();
+    const el=$("#pdfview"), body=$("#pv-body");
+    $("#pv-title").textContent = name || "Document";
+    $("#pv-sub").textContent = isPdf ? "PDF Document" : "Image";
+    $("#pv-ico").innerHTML = isPdf ? PV_PDF_ICO : PV_IMG_ICO;
+    const dl=$("#pv-download"); dl.href=dataURL; dl.download=name||"document";
+    PV.zoom=1;
+    body.innerHTML="";
+    try{
+      const blob=await (await fetch(dataURL)).blob();
+      if(el._blobUrl) URL.revokeObjectURL(el._blobUrl);
+      const u=URL.createObjectURL(blob); el._blobUrl=u;
+      $("#pv-tab").href=u;
+      body.innerHTML = `<div class="pv-canvas">${isPdf
+        ? `<iframe title="${esc(name||'Document')}" src="${u}#toolbar=0&navpanes=0"></iframe>`
+        : `<img alt="${esc(name||'Document')}" src="${u}">`}</div>`;
+    }catch(err){ console.error(err); body.innerHTML=`<p style="color:var(--muted);padding:24px;text-align:center">Couldn't open this file. Try Download instead.</p>`; }
+    el.classList.add("open");
+    pvApplyZoom(1);
+    requestAnimationFrame(()=>{ body.scrollLeft=(body.scrollWidth-body.clientWidth)/2; });
+  }
+  async function openManualViewer(id){
+    const meta=manualMeta();
+    const p=modalState && modalState.pending.manual;
+    let dataURL = (modalState && modalState.item.id===id && p!==undefined && p) ? p.dataURL : await idbGet(manualKey(id));
+    if(!dataURL){ alert("Manual not found."); return; }
+    openDocViewer(dataURL, (meta&&meta.name)||"manual.pdf", true);
+  }
+  async function openReceiptViewer(id){
+    const meta=receiptMeta();
+    const p=modalState && modalState.pending.receipt;
+    let dataURL = (modalState && modalState.item.id===id && p!==undefined && p) ? p.dataURL : await idbGet(receiptKey(id));
+    if(!dataURL){ alert("Receipt not found."); return; }
+    openDocViewer(dataURL, (meta&&meta.name)||"receipt", !(meta&&meta.isImg));
+  }
+
+  /* ---------- collect + persist ---------- */
+  function collectFields(){
+    $$("#modal [data-k]").forEach(el=>{ modalState.item[el.dataset.k]=el.value; });
+    ["price","capacity","energy","warranty_years"].forEach(k=>{
+      if(k in modalState.item){ const v=modalState.item[k]; modalState.item[k] = (v===""||v==null) ? "" : Number(v); }
+    });
+  }
+  async function saveItem(){
+    collectFields();
+    const it=modalState.item, kind=modalState.kind;
+    if(kind==="wishlist"){ if(!(it.name||"").trim()){ alert("Please give this item a name."); return; } it.icon="tag"; }
+    else { if(!(it.name||"").trim()){ alert("Please give this "+(modalState.isBatt?"battery":"tool")+" a name."); return; }
+           if(kind==="tool") it.icon=pickIcon(it.name); else it.icon="battery"; }
+
+    // flush pending files to IndexedDB, update lightweight meta on the record
+    if(modalState.pending.photo!==undefined){ if(modalState.pending.photo) await setPhoto(it.id,modalState.pending.photo); else await delPhoto(it.id); }
+    if(modalState.pending.photoOrig!==undefined){ if(modalState.pending.photoOrig) await idbSet(photoOrigKey(it.id),modalState.pending.photoOrig); else await idbDelete(photoOrigKey(it.id)); }
+    if(modalState.pending.crop!==undefined) it.crop=modalState.pending.crop;
+    if(modalState.pending.receipt!==undefined){
+      if(modalState.pending.receipt){ await idbSet(receiptKey(it.id),modalState.pending.receipt.dataURL);
+        it.receipt={name:modalState.pending.receipt.name,size:modalState.pending.receipt.size,isImg:modalState.pending.receipt.isImg}; }
+      else { await idbDelete(receiptKey(it.id)); it.receipt=null; }
+    }
+    if(modalState.pending.manual!==undefined){
+      if(modalState.pending.manual){ await idbSet(manualKey(it.id),modalState.pending.manual.dataURL);
+        it.manual={name:modalState.pending.manual.name,size:modalState.pending.manual.size}; }
+      else { await idbDelete(manualKey(it.id)); it.manual=null; }
+    }
+
+    const coll = kind==="wishlist"?data.wishlist : modalState.isBatt?data.batteries : data.tools;
+    const i=coll.findIndex(o=>o.id===it.id);
+    if(i>=0) coll[i]=it; else coll.push(it);
+    await propagatePhotoToSameModel(it, kind, coll);
+    save(); closeModal(); render(true); refreshStats(true);
+  }
+  // when a photo and/or manual is set/changed, offer to reuse it for other items with the
+  // same model number (same product = same photo + same manual). Receipts never propagate —
+  // they're per-purchase, each physical item keeps its own. Removal never propagates either.
+  async function propagatePhotoToSameModel(it, kind, coll){
+    if(kind==="wishlist") return;
+    const pend=modalState.pending;
+    const sharePhoto  = pend.photo!==undefined  && !!pend.photo;   // just added/adjusted
+    const shareManual = pend.manual!==undefined && !!pend.manual;  // just uploaded
+    if(!sharePhoto && !shareManual) return;
+    const key=(it.model||"").trim().toLowerCase(); if(!key) return;
+    const sibs=coll.filter(o=>o.id!==it.id && (o.model||"").trim().toLowerCase()===key);
+    if(!sibs.length) return;
+    const what = sharePhoto && shareManual ? "photo and manual" : sharePhoto ? "photo and crop" : "manual";
+    const noun = kind==="battery" ? (sibs.length>1?"batteries":"battery") : (sibs.length>1?"tools":"tool");
+    if(!confirm(`${sibs.length} other ${noun} share${sibs.length>1?"":"s"} model “${it.model}”. Use this same ${what} for ${sibs.length>1?"them":"it"} too?`)) return;
+    if(sharePhoto){
+      const p=await getPhoto(it.id), po=await getPhotoOrig(it.id);
+      for(const s of sibs){
+        if(p) await setPhoto(s.id,p); else await delPhoto(s.id);
+        if(po) await idbSet(photoOrigKey(s.id),po); else await idbDelete(photoOrigKey(s.id));
+        s.crop = it.crop || null;
+      }
+    }
+    if(shareManual){
+      const m=await idbGet(manualKey(it.id));
+      for(const s of sibs){
+        if(m) await idbSet(manualKey(s.id),m); else await idbDelete(manualKey(s.id));
+        s.manual = it.manual ? {...it.manual} : null;
+      }
+    }
+  }
+  async function deleteItem(id){
+    if(!confirm("Delete this item permanently? This also removes its photo, receipt and manual.")) return;
+    await delPhoto(id); await idbDelete(photoOrigKey(id)); await idbDelete(receiptKey(id)); await idbDelete(manualKey(id));
+    data.tools     = data.tools.filter(x=>x.id!==id);
+    data.batteries = data.batteries.filter(x=>x.id!==id);
+    data.wishlist  = data.wishlist.filter(x=>x.id!==id);
+    save(); closeModal(); render(true); refreshStats(true);
+  }
+
+  /* ---------- move a wishlist item into the inventory ---------- */
+  function acquire(id){
+    const i = data.wishlist.findIndex(w=>w.id===id);
+    if(i<0){ closeModal(); return; }
+    const w = data.wishlist[i];
+    const isBatt = /batter|\b\d+(\.\d+)?\s*ah\b/i.test(w.name||"");
+    const base = { id:uuid(), name:w.name, model:"", serial:"", v:w.v||defaultSystem(), date:todayISO(),
+      price:(w.price===""||w.price==null)?"":Number(w.price), warranty_years:DEFAULT_WARRANTY,
+      mfg:"", notes:w.notes||"", receipt:null, manual:null };
+    const item = isBatt
+      ? Object.assign(base,{capacity:"",energy:"",nominal:"",chemistry:"",icon:"battery"})
+      : Object.assign(base,{compat:"",maint:[],icon:pickIcon(w.name)});
+    (isBatt?data.batteries:data.tools).unshift(item);
+    data.wishlist.splice(i,1);
+    save(); closeModal();
+    ui.tab = isBatt ? "batteries" : "tools";
+    $$("#tabs button").forEach(b=>b.classList.toggle("active", b.dataset.tab===ui.tab));
+    render(true); refreshStats(true); celebrate();
+    window.scrollTo({top:0,behavior:"smooth"});
+    flash(`Moved to ${isBatt?"Batteries":"Tools"} ✓`);
+  }
+  function celebrate(){
+    const a=_brand?_brand.accent:"#84CC16", P=_brand?_brand.palette:brandPalette(BRANDS.greenworks);
+    const colors=[P.bright, a, mixc(a,"#ffffff",0.5), P.deep, mixc(a,"#ffffff",0.7)];
+    const cx=window.innerWidth/2, cy=window.innerHeight*0.34;
+    for(let k=0;k<18;k++){
+      const s=document.createElement("div"); s.className="spark";
+      const ang=Math.random()*Math.PI*2, dist=70+Math.random()*120;
+      s.style.left=cx+"px"; s.style.top=cy+"px"; s.style.color=colors[k%colors.length]; s.style.background="currentColor";
+      s.style.setProperty("--dx", Math.cos(ang)*dist+"px");
+      s.style.setProperty("--dy", (Math.sin(ang)*dist-30)+"px");
+      s.style.setProperty("--rot", (Math.random()*540-270)+"deg");
+      s.style.animation=`sparkOut ${640+Math.random()*340}ms cubic-bezier(.15,.7,.3,1) forwards`;
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(),1050);
+    }
+  }
+
+  /* ---------- export / import / clear ---------- */
+  /* Backup folder (File System Access API, Chromium only): the user picks a folder once,
+     we keep its directory handle in IndexedDB under "backupDir" (survives reloads/restarts),
+     and exports write straight into it. No folder set / unsupported / write fails → fall
+     back to a normal browser download. The handle is a device setting, not data: it is
+     excluded from export bundles and preserved across Import / Clear-everything. */
+  const supportsFS = "showDirectoryPicker" in window;
+  const BACKUP_DIR_KEY = "backupDir";
+  const getBackupDir = () => idbGet(BACKUP_DIR_KEY);
+  async function setBackupFolder(){
+    try{
+      const h = await window.showDirectoryPicker({ mode:"readwrite" });
+      await idbSet(BACKUP_DIR_KEY, h);
+      refreshBackupFolderUI(); flash(`Backups will save to “${h.name}” ✓`);
+      scheduleAutoBackup();   // write a current backup right away (picker just granted readwrite)
+    }catch(e){ if(e && e.name!=="AbortError") console.error(e); } // AbortError = user cancelled the picker
+  }
+
+  /* Auto-backup: after any data change (save()), quietly rewrite today's backup file in the
+     chosen folder. Debounced so bursts of saves write once. Skipped when: no folder set,
+     permission would need a prompt we can't silently show (next manual export re-grants it),
+     or the data is completely empty — so Clear-everything can never wipe today's backup. */
+  let autoBackupTimer=null;
+  function scheduleAutoBackup(){ clearTimeout(autoBackupTimer); autoBackupTimer=setTimeout(autoBackup, 2500); }
+  async function autoBackup(){
+    try{
+      if(!supportsFS) return;
+      if(!data.tools.length && !data.batteries.length && !data.wishlist.length) return;
+      const dir = await getBackupDir(); if(!dir) return;
+      let perm = await dir.queryPermission({ mode:"readwrite" });
+      if(perm!=="granted"){
+        if(navigator.userActivation && navigator.userActivation.isActive)
+          perm = await dir.requestPermission({ mode:"readwrite" });
+        if(perm!=="granted") return;
+      }
+      const files = await idbAll(); delete files[BACKUP_DIR_KEY];
+      const bundle = { schema:"greenworks-tracker", version:2, exportedAt:new Date().toISOString(),
+                       tools:data.tools, batteries:data.batteries, wishlist:data.wishlist, settings:data.settings, files };
+      const fh = await dir.getFileHandle("greenworks-tracker-"+todayISO()+".json", { create:true });
+      const w = await fh.createWritable(); await w.write(JSON.stringify(bundle,null,2)); await w.close();
+    }catch(e){ console.warn("auto-backup skipped:", e); }
+  }
+  async function clearBackupFolder(){
+    await idbDelete(BACKUP_DIR_KEY);
+    refreshBackupFolderUI(); flash("Backup folder cleared — exports will download");
+  }
+  async function refreshBackupFolderUI(){
+    const host=$("#bk-folder"); if(!host) return;
+    if(!supportsFS){
+      host.innerHTML=`<span>Saving to a folder needs a Chromium browser (Chrome / Edge / Brave) — backups download instead.</span>`;
+      return;
+    }
+    const FOLDER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>';
+    const dir = await getBackupDir();
+    if(dir){
+      host.innerHTML=`<span>Backups save to <b>${esc(dir.name)}</b> — auto-saved after every change</span><span class="spread"></span>
+        <button class="btn" id="bkdir-set" type="button">${FOLDER}Change…</button>
+        <button class="btn" id="bkdir-clear" type="button">Clear</button>`;
+    }else{
+      host.innerHTML=`<span>Backups download to your Downloads folder. Set a folder to back up automatically after every change.</span><span class="spread"></span>
+        <button class="btn" id="bkdir-set" type="button">${FOLDER}Set backup folder…</button>`;
+    }
+  }
+  async function exportJSON(){
+    const files = await idbAll();
+    delete files[BACKUP_DIR_KEY];   // device setting, not data — keep it out of the bundle
+    const bundle = { schema:"greenworks-tracker", version:2, exportedAt:new Date().toISOString(),
+                     tools:data.tools, batteries:data.batteries, wishlist:data.wishlist, settings:data.settings, files };
+    const json = JSON.stringify(bundle,null,2);
+    const name = "greenworks-tracker-"+todayISO()+".json";
+    const dir = supportsFS ? await getBackupDir() : null;
+    if(dir){
+      try{
+        let perm = await dir.queryPermission({ mode:"readwrite" });
+        if(perm!=="granted") perm = await dir.requestPermission({ mode:"readwrite" });
+        if(perm==="granted"){
+          const fh = await dir.getFileHandle(name, { create:true });
+          const w = await fh.createWritable(); await w.write(json); await w.close();
+          flash(`Backup saved to “${dir.name}” ✓`);
+          return;
+        }
+      }catch(e){ console.error("backup folder write failed", e); }
+      flash("Couldn't write to the backup folder — downloaded instead");
+    }
+    const blob=new Blob([json],{type:"application/json"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+    a.download=name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    if(!dir) flash("Backup exported ✓");
+  }
+  async function importJSON(file){
+    let bundle; try{ bundle=JSON.parse(await file.text()); }catch(e){ alert("That file isn't valid JSON."); return; }
+    if(!bundle || !Array.isArray(bundle.tools) || !Array.isArray(bundle.batteries)){
+      alert("This file doesn't look like a Greenworks Tracker backup (missing tools/batteries)."); return;
+    }
+    if(!confirm("Import will REPLACE everything currently on this device — tools, batteries, wishlist and all files. Continue?")) return;
+    const existing = await idbAll();
+    for(const k of Object.keys(existing)){ if(k!==BACKUP_DIR_KEY) await idbDelete(k); }
+    if(bundle.files && typeof bundle.files==="object"){ for(const [k,v] of Object.entries(bundle.files)){ if(k!==BACKUP_DIR_KEY) await idbSet(k,v); } }
+    data = normalize({ tools:bundle.tools, batteries:bundle.batteries, wishlist:bundle.wishlist, settings:bundle.settings });
+    save(); applyBrand(); render(true); refreshStats(true); flash("Import complete ✓");
+  }
+  async function clearAll(){
+    if(!confirm("Delete ALL tools, batteries, wishlist items and files from this device? This cannot be undone.")) return;
+    if(!confirm("Really delete everything? Export a backup first if unsure.")) return;
+    const existing = await idbAll();
+    for(const k of Object.keys(existing)){ if(k!==BACKUP_DIR_KEY) await idbDelete(k); }
+    data = { tools:[], batteries:[], wishlist:[], settings:{} };
+    save(); applyBrand(); render(true); refreshStats(true); flash("All data cleared");
+  }
+
+  /* ---------- merge purchase info from a filled CSV (matched by ID, then serial) ---------- */
+  function parseCSV(text){
+    const rows=[]; let row=[], cur="", q=false;
+    text=text.replace(/\r\n/g,"\n").replace(/\r/g,"\n");
+    for(let i=0;i<text.length;i++){ const ch=text[i];
+      if(q){ if(ch==='"'){ if(text[i+1]==='"'){ cur+='"'; i++; } else q=false; } else cur+=ch; }
+      else { if(ch==='"') q=true; else if(ch===','){ row.push(cur); cur=""; }
+        else if(ch==='\n'){ row.push(cur); rows.push(row); row=[]; cur=""; } else cur+=ch; } }
+    if(cur!==""||row.length){ row.push(cur); rows.push(row); }
+    return rows.filter(r=>r.some(c=>c.trim()!==""));
+  }
+  function normalizeDate(s){ s=(s||"").trim(); if(!s) return "";
+    if(/^\d{4}-\d{1,2}-\d{1,2}$/.test(s)){ const [y,m,d]=s.split("-"); return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`; }
+    const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+    if(m){ let mo=+m[1],da=+m[2],yr=+m[3]; if(yr<100)yr+=2000; if(mo>12&&da<=12){ const t=mo; mo=da; da=t; } return `${yr}-${String(mo).padStart(2,'0')}-${String(da).padStart(2,'0')}`; }
+    const d=new Date(s); return isNaN(d)?null:d.toISOString().slice(0,10);
+  }
+  function parsePrice(s){ s=(s||"").replace(/[^0-9.]/g,""); if(!s) return null; const n=parseFloat(s); return isNaN(n)?null:n; }
+  async function importPurchaseCSV(file){
+    const rows=parseCSV(await file.text());
+    if(rows.length<2){ alert("That CSV looks empty."); return; }
+    const hdr=rows[0].map(h=>h.trim().toLowerCase());
+    const col=(...names)=>hdr.findIndex(h=>names.some(n=>h.includes(n)));
+    const ci={ id:col("id"), serial:col("serial","s/n"), date:col("date"), price:col("price","amount","paid","cost") };
+    if(ci.date<0 && ci.price<0){ alert("Couldn't find an Order Date or Price column in that CSV. Expected headers like “Order Date” and “Price Paid”."); return; }
+    const all=[...data.tools,...data.batteries];
+    let updated=0, unmatched=0, badDates=0;
+    for(let r=1;r<rows.length;r++){
+      const row=rows[r];
+      const id=ci.id>=0?(row[ci.id]||"").trim():"";
+      const serial=ci.serial>=0?(row[ci.serial]||"").trim().toLowerCase():"";
+      let it = id && all.find(x=>x.id===id);
+      if(!it && serial) it=all.find(x=>(x.serial||"").trim().toLowerCase()===serial);
+      if(!it){ if(id||serial) unmatched++; continue; }
+      let changed=false;
+      if(ci.date>=0){ const raw=row[ci.date]; const nd=normalizeDate(raw); if(nd){ if(nd!==it.date){ it.date=nd; changed=true; } } else if((raw||"").trim()) badDates++; }
+      if(ci.price>=0){ const np=parsePrice(row[ci.price]); if(np!=null && np!==it.price){ it.price=np; changed=true; } }
+      if(changed) updated++;
+    }
+    save(); render(true); refreshStats(true);
+    alert(`Purchase info imported.\nUpdated ${updated} item(s).`
+      + (unmatched?`\n${unmatched} row(s) didn't match any item — skipped.`:"")
+      + (badDates?`\n${badDates} date(s) couldn't be read (use YYYY-MM-DD).`:""));
+  }
+
+  /* ---------- toast ---------- */
+  let toastEl;
+  function flash(msg){
+    if(!toastEl){ toastEl=document.createElement("div"); toastEl.style.cssText=
+      "position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:120;background:var(--surface-3);color:var(--text);border:1px solid var(--line-2);padding:11px 18px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:var(--shadow-lift);opacity:0;transition:opacity .2s,transform .2s;pointer-events:none";
+      document.body.appendChild(toastEl); }
+    toastEl.textContent=msg; toastEl.style.opacity="1"; toastEl.style.transform="translateX(-50%) translateY(-4px)";
+    clearTimeout(toastEl._t); toastEl._t=setTimeout(()=>{ toastEl.style.opacity="0"; toastEl.style.transform="translateX(-50%)"; },1600);
+  }
+
+  /* ---------- theme ---------- */
+  const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+  const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>';
+  function applyTheme(t){ document.documentElement.setAttribute("data-theme",t); const b=$("#theme-btn"); if(b) b.innerHTML = t==="light" ? SUN : MOON; }
+  let theme = document.documentElement.getAttribute("data-theme") || "dark";
+
+  /* ---------- custom sort dropdown (mirrors the hidden native #sort) ---------- */
+  function syncSortUI(){
+    const sel=$("#sort"), btn=$("#csel-btn"), pop=$("#csel-pop"), label=$("#csel-label");
+    if(!sel||!btn) return;
+    const cur=sel.options[sel.selectedIndex];
+    if(label) label.textContent = cur ? cur.text : "";
+    if(pop) pop.innerHTML=[...sel.options].filter(o=>!o.hidden).map(o=>
+      `<div class="csel-opt" role="option" data-val="${o.value}" aria-selected="${o.value===sel.value?'true':'false'}">${o.text}</div>`).join("");
+  }
+  function toggleSortPop(open){
+    const pop=$("#csel-pop"), btn=$("#csel-btn"); if(!pop) return;
+    const will = open!==undefined ? open : !pop.classList.contains("open");
+    pop.classList.toggle("open", will); if(btn) btn.setAttribute("aria-expanded", will?'true':'false');
+  }
+  function moveActive(dir){
+    const opts=[...$$("#csel-pop .csel-opt")]; if(!opts.length) return;
+    let i=opts.findIndex(o=>o.classList.contains("active"));
+    if(i<0) i=opts.findIndex(o=>o.getAttribute("aria-selected")==="true");
+    i=(i+dir+opts.length)%opts.length;
+    opts.forEach(o=>o.classList.remove("active")); opts[i].classList.add("active"); opts[i].scrollIntoView({block:"nearest"});
+  }
+  function chooseSort(val){ const sel=$("#sort"); sel.value=val; sel.dispatchEvent(new Event("change")); toggleSortPop(false); }
+
+  /* ============================================================
+     EVENTS
+     ============================================================ */
+  $("#tabs").addEventListener("click", e=>{
+    const b=e.target.closest("[data-tab]"); if(!b) return;
+    $$("#tabs button").forEach(x=>x.classList.toggle("active", x===b));
+    ui.tab=b.dataset.tab; ui.q=""; $("#search").value=""; render(true);
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+  $("#search").addEventListener("input", e=>{ ui.q=e.target.value; render(false); });
+  $("#sort").addEventListener("change", e=>{ ui.sort=e.target.value; render(false); });
+
+  document.addEventListener("click", e=>{
+    if(e.target.closest('a[data-extlink]')) return;           // let wishlist links open normally
+    // custom sort dropdown
+    if(!e.target.closest(".sel-wrap")) toggleSortPop(false);  // click anywhere outside closes it
+    if(e.target.closest("#csel-btn")){ toggleSortPop(); return; }
+    const csopt=e.target.closest(".csel-opt");
+    if(csopt){ chooseSort(csopt.dataset.val); return; }
+    if(e.target.closest("#theme-btn")){ theme=theme==="light"?"dark":"light"; try{localStorage.setItem(THEME_KEY,theme);}catch(_){} applyTheme(theme); return; }
+    const acq=e.target.closest("[data-acquire]");
+    if(acq){ acquire(acq.dataset.acquire); return; }
+    const add=e.target.closest('[data-action="add"]');
+    if(add){ openModal("new"); return; }
+    // settings
+    if(e.target.closest("#export-btn")){ exportJSON(); return; }
+    if(e.target.closest("#import-btn")){ $("#import-file").click(); return; }
+    if(e.target.closest("#clear-btn")){ clearAll(); return; }
+    if(e.target.closest("#purch-btn")){ $("#purch-file").click(); return; }
+    if(e.target.closest("#bkdir-set")){ setBackupFolder(); return; }
+    if(e.target.closest("#bkdir-clear")){ clearBackupFolder(); return; }
+    if(e.target.closest("#brand-apply")){
+      const name=($("#brand-name").value||"").trim()||"My Tools";
+      data.settings.brand={ preset:"custom", name, accent:$("#brand-color").value, systems:$("#brand-systems").value };
+      save(); applyBrand(); render(true); flash(`Brand set to ${name} ✓`); return;
+    }
+    // modal file actions
+    if(e.target.closest("#photo-preview")){ if($("#photo-preview img")) adjustExistingPhoto(); else { const inp=$("#photo-input"); if(inp) inp.click(); } return; }
+    const mvw=e.target.closest("[data-manual-view]"); if(mvw){ openManualViewer(mvw.dataset.manualView); return; }
+    const mdl=e.target.closest("[data-manual-dl]"); if(mdl){ downloadFileFor("manual",mdl.dataset.manualDl); return; }
+    const mde=e.target.closest("[data-manual-del]"); if(mde){ modalState.pending.manual=null; refreshManual(); return; }
+    const rvw=e.target.closest("[data-receipt-view]"); if(rvw){ openReceiptViewer(rvw.dataset.receiptView); return; }
+    const rdl=e.target.closest("[data-receipt-dl]"); if(rdl){ downloadFileFor("receipt",rdl.dataset.receiptDl); return; }
+    const rde=e.target.closest("[data-receipt-del]"); if(rde){ modalState.pending.receipt=null; refreshReceipt(); return; }
+    // maintenance
+    if(e.target.closest("#maint-add")){ addMaint(); return; }
+    const dm=e.target.closest("[data-delmaint]"); if(dm){ modalState.item.maint.splice(+dm.dataset.delmaint,1); refreshMaint(); return; }
+    // modal open / save / delete
+    const open=e.target.closest("[data-open]");
+    if(open && !e.target.closest("#modal")){ openModal(open.dataset.open); return; }
+    const save2=e.target.closest("[data-save]"); if(save2){ saveItem(); return; }
+    const del=e.target.closest("[data-del]"); if(del){ deleteItem(del.dataset.del); return; }
+    if(e.target.closest("[data-close]")){ closeModal(); return; }
+  });
+
+  document.addEventListener("change", async e=>{
+    if(e.target.id==="brand-select"){
+      const v=e.target.value;
+      if(v==="custom"){ const p=$("#brand-custom"); if(p) p.style.display="block"; return; }
+      data.settings.brand={ preset:v }; save(); applyBrand(); render(true);
+      flash(`Brand set to ${BRANDS[v].name} ✓`); return;
+    }
+    if(e.target.id==="import-file"){ if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=""; return; }
+    if(e.target.id==="purch-file"){ if(e.target.files[0]) importPurchaseCSV(e.target.files[0]); e.target.value=""; return; }
+    if(!modalState) return;
+    if(e.target.id==="photo-input" && e.target.files[0]){
+      const orig=await resizeImage(e.target.files[0],1600,0.82);   // keep a capped original so it can be re-adjusted later
+      e.target.value="";
+      openCropper(orig, null, applyPhotoResult);
+    }
+    if(e.target.id==="receipt-input" && e.target.files[0]){
+      const f=e.target.files[0]; const isImg=f.type.indexOf("image/")===0;
+      const dataURL = isImg ? await resizeImage(f, 1400, 0.72) : await fileToDataURL(f);
+      modalState.pending.receipt={ name:f.name, size:fmtSize(f.size), isImg, dataURL };
+      refreshReceipt(); e.target.value="";
+    }
+    if(e.target.id==="manual-input" && e.target.files[0]){
+      const f=e.target.files[0];
+      const dataURL = await fileToDataURL(f);
+      modalState.pending.manual={ name:f.name, size:fmtSize(f.size), dataURL };
+      refreshManual(); e.target.value="";
+    }
+  });
+
+  $("#modal-bg").addEventListener("click", e=>{ if(e.target.id==="modal-bg") closeModal(); });
+  document.addEventListener("keydown", e=>{ if(e.key!=="Escape") return;
+    if($("#pdfview") && $("#pdfview").classList.contains("open")) closePdfViewer();
+    else if($("#cropper") && $("#cropper").classList.contains("open")) closeCropper();
+    else if($("#csel-pop") && $("#csel-pop").classList.contains("open")){ toggleSortPop(false); const b=$("#csel-btn"); if(b) b.focus(); }
+    else if($("#modal-bg").classList.contains("open")) closeModal(); });
+  // sort dropdown keyboard nav
+  $("#csel-btn").addEventListener("keydown", e=>{
+    if((e.key==="ArrowDown"||e.key==="ArrowUp"||e.key==="Enter"||e.key===" ") && !$("#csel-pop").classList.contains("open")){ e.preventDefault(); toggleSortPop(true); }
+  });
+  document.addEventListener("keydown", e=>{
+    const pop=$("#csel-pop"); if(!pop || !pop.classList.contains("open")) return;
+    if(e.key==="ArrowDown"){ e.preventDefault(); moveActive(1); }
+    else if(e.key==="ArrowUp"){ e.preventDefault(); moveActive(-1); }
+    else if(e.key==="Enter"){ e.preventDefault(); const a=$("#csel-pop .csel-opt.active")||$("#csel-pop .csel-opt[aria-selected='true']"); if(a){ chooseSort(a.dataset.val); const b=$("#csel-btn"); if(b) b.focus(); } }
+  });
+
+  /* ---------- init ---------- */
+  applyTheme(theme);
+  applyBrand();
+  render(true);
+  refreshStats(true);
+})();
+</script>
+</body>
+</html>
