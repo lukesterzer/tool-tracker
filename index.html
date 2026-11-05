@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tool Tracker</title>
+<meta name="theme-color" content="#100F0D">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwLjEiIHkxPSIwIiB4Mj0iMC45IiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjQTNFNjM1Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNUU4RjBFIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMTYiIHk9IjE2IiB3aWR0aD0iNDgwIiBoZWlnaHQ9IjQ4MCIgcng9IjExNiIgZmlsbD0idXJsKCNnKSIvPjxwYXRoIGQ9Ik0xMyAyIDQgMTMuNWg2TDkuNiAyMiAyMCA5LjVoLTYuNEwxMyAyWiIgZmlsbD0iIzBFMTQwMyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNjQsNjQpIHNjYWxlKDE2KSIvPjwvc3ZnPg==">
 <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwLjEiIHkxPSIwIiB4Mj0iMC45IiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjQTNFNjM1Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNUU4RjBFIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMTYiIHk9IjE2IiB3aWR0aD0iNDgwIiBoZWlnaHQ9IjQ4MCIgcng9IjExNiIgZmlsbD0idXJsKCNnKSIvPjxwYXRoIGQ9Ik0xMyAyIDQgMTMuNWg2TDkuNiAyMiAyMCA5LjVoLTYuNEwxMyAyWiIgZmlsbD0iIzBFMTQwMyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNjQsNjQpIHNjYWxlKDE2KSIvPjwvc3ZnPg==">
 <script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('gw-theme')||'dark');}catch(e){}</script>
@@ -865,7 +866,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
   function fmtDate(d){ if(!d) return "—"; const [y,m,da]=d.split("-"); const dt=new Date(y,m-1,da); return isNaN(dt)?"—":dt.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
 
   /* ---------- config ---------- */
-  const APP_VERSION = "2026-11-02";
+  const APP_VERSION = "2026-11-05";
   const STORAGE_KEY = "greenworks_tracker_data";
   const THEME_KEY   = "gw-theme";
   const DEFAULT_WARRANTY = 4;         // Greenworks consumer tools & batteries ≈ 4yr
@@ -2165,6 +2166,12 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
   applyBrand();
   render(true);
   refreshStats(true);
+
+  /* ---------- PWA (hosted https copies only; local file:// copies skip this) ---------- */
+  if(location.protocol==="https:"){
+    const l=document.createElement("link"); l.rel="manifest"; l.href="manifest.json"; document.head.appendChild(l);
+    if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+  }
 })();
 </script>
 </body>
