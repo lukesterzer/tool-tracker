@@ -866,7 +866,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
   function fmtDate(d){ if(!d) return "—"; const [y,m,da]=d.split("-"); const dt=new Date(y,m-1,da); return isNaN(dt)?"—":dt.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
 
   /* ---------- config ---------- */
-  const APP_VERSION = "2026-11-05";
+  const APP_VERSION = "2026-11-20";
   const STORAGE_KEY = "greenworks_tracker_data";
   const THEME_KEY   = "gw-theme";
   const DEFAULT_WARRANTY = 4;         // Greenworks consumer tools & batteries ≈ 4yr
@@ -968,6 +968,9 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
      one base color. applyBrand() injects a <style id="brand-css"> override, swaps
      the header eyebrow, document title and favicon, and rebuilds system CSS vars. */
   const BRANDS = {
+    generic:{ name:"Generic", generic:true, accent:"#8FA3B8",   // neutral steel; no brand name shown anywhere
+      systems:[ {id:"12V",label:"12V",tier:"Compact"},{id:"18V",label:"18V",tier:"Standard"},
+                {id:"20V",label:"20V MAX",tier:"Standard"},{id:"40V",label:"40V",tier:"Outdoor"},{id:"80V",label:"80V",tier:"Max power"} ] },
     greenworks:{ name:"Greenworks", accent:"#84CC16",
       palette:{ bright:"#A3E635", deep:"#5E8F0E", ink:"#0E1403", textDark:"#A3E635", textLight:"#4D7C0F" },
       sysColors:{ "24V":"#D9F99D","40V":"#A3E635","60V":"#84CC16","80V":"#65A30D" },
@@ -1035,8 +1038,8 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
     let tag=document.getElementById("brand-css");
     if(!tag){ tag=document.createElement("style"); tag.id="brand-css"; document.head.appendChild(tag); }
     tag.textContent=css;
-    const sub=document.getElementById("brand-sub"); if(sub) sub.textContent=`${B.name} · Personal Inventory`;
-    document.title=`${B.name==="Greenworks"?"Greenworks":B.name} Tool Tracker`;
+    const sub=document.getElementById("brand-sub"); if(sub) sub.textContent = B.generic ? "Personal Inventory" : `${B.name} · Personal Inventory`;
+    document.title = B.generic ? "Tool Tracker" : `${B.name} Tool Tracker`;
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0.1" y1="0" x2="0.9" y2="1"><stop offset="0" stop-color="${P.bright}"/><stop offset="1" stop-color="${P.deep}"/></linearGradient></defs><rect x="16" y="16" width="480" height="480" rx="116" fill="url(#g)"/><path d="M13 2 4 13.5h6L9.6 22 20 9.5h-6.4L13 2Z" fill="${P.ink}" transform="translate(64,64) scale(16)"/></svg>`;
     const uri="data:image/svg+xml;base64,"+btoa(svg);
     document.querySelectorAll('link[rel="icon"],link[rel="apple-touch-icon"]').forEach(l=>l.href=uri);
@@ -1178,7 +1181,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
   /* ---------- collections / helpers ---------- */
   function dataFor(tab){ return tab==="batteries"?data.batteries : tab==="wishlist"?data.wishlist : data.tools; }
   function itemById(id){ return data.tools.find(o=>o.id===id) || data.batteries.find(o=>o.id===id) || data.wishlist.find(o=>o.id===id) || null; }
-  function vnum(v){ if(v==="AC") return -1; const i=brandSystems().findIndex(s=>s.id===v); return i<0 ? -0.5 : i; }  // lineup position; AC last, legacy between
+  function vnum(v){ if(!v) return -1.5; if(v==="AC") return -1; const i=brandSystems().findIndex(s=>s.id===v); return i<0 ? -0.5 : i; }  // lineup position; AC then no-system last, legacy between
 
   function filterSort(list){
     const q = ui.q.trim().toLowerCase();
@@ -1277,20 +1280,20 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
   function renderGrouped(list, isBatt){
     const known=brandSystems().map(s=>s.id);
     const extras=[...new Set(list.map(x=>x.v).filter(v=>v && v!=="AC" && !known.includes(v)))]; // legacy systems from another brand still get a group
-    const order=[...known].reverse().concat(extras,["AC"]);
+    const order=[...known].reverse().concat(extras,["AC",""]);   // trailing "" = tools with no battery system (hand tools etc.)
     let gi=0, html="";
     order.forEach(v=>{
-      const items=list.filter(x=>x.v===v).sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+      const items=list.filter(x=>(x.v||"")===v).sort((a,b)=>(a.name||"").localeCompare(b.name||""));
       if(!items.length) return;
       const total=items.reduce((s,x)=>s+(Number(x.price)||0),0);
       const pct=list.length?Math.round(items.length/list.length*100):0;
-      const isAC = v==="AC";
-      const vm = !isAC && v.match(/^(\d+(?:\.\d+)?)V$/);   // "80V" → big number + small V; "M18"/"AP" → shown as-is
+      const isAC = v==="AC", isNone = v==="";
+      const vm = !isAC && !isNone && v.match(/^(\d+(?:\.\d+)?)V$/);   // "80V" → big number + small V; "M18"/"AP" → shown as-is
       html+=`<section class="sysgroup">
         <div class="sysgroup-head" data-v="${cssSafe(v)}">
-          <span class="vnum">${isAC?'AC': vm? vm[1]+'<span class="vu">V</span>' : esc(v)}</span>
+          <span class="vnum">${isNone?'—': isAC?'AC': vm? vm[1]+'<span class="vu">V</span>' : esc(v)}</span>
           <div class="vmid">
-            <span class="vtier">${esc(tierOf(v))}</span>
+            <span class="vtier">${isNone?'No battery system':esc(tierOf(v))}</span>
             <span class="vchg" title="${pct}% of your ${isBatt?'batteries':'tools'}"><span style="width:${pct}%"></span></span>
           </div>
           <span class="vmeta"><span>${isBatt?'Batteries':'Tools'} <b>${items.length}</b></span><span>Invested <b>${money(total)}</b></span></span>
@@ -1355,7 +1358,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
       </div>
       <div class="scard">
         <h2>Brand</h2>
-        <p>Theme the whole app — colors, name, favicon and battery systems — for the tool brand you own. Travels with backups.</p>
+        <p>Theme the whole app — colors, name, favicon and battery systems. Pick your tool brand, the neutral <b>Generic</b> theme (no brand, fits any inventory), or build a custom one. Travels with backups.</p>
         <div class="row"><select class="inp" id="brand-select" style="max-width:240px">${
           Object.entries(BRANDS).map(([k,b])=>`<option value="${k}" ${k===curBrandKey?'selected':''}>${b.name}</option>`).join("")
         }<option value="custom" ${curBrandKey==="custom"?'selected':''}>Custom…</option></select></div>
@@ -1503,7 +1506,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
     let volts = isBatt ? sysIds : sysIds.concat(["AC"]);
     if(item.v && !volts.includes(item.v)) volts=[item.v,...volts];   // keep a legacy value selectable after a brand switch
     const vLabel = v => v==="AC" ? "Corded / AC" : ((sysOf(v)||{}).label || v);
-    const vOpts = (isWish?['<option value="">— none —</option>']:[]).concat(
+    const vOpts = (!isBatt?['<option value="">— none —</option>']:[]).concat(
       volts.map(v=>`<option value="${esc(v)}" ${v===item.v?'selected':''}>${esc(vLabel(v))}</option>`)).join("");
     const pOpts = [["high","High"],["med","Medium"],["low","Low"]]
       .map(([k,l])=>`<option value="${k}" ${k===(item.priority||'med')?'selected':''}>${l}</option>`).join("");
@@ -1833,7 +1836,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
     if(i<0){ closeModal(); return; }
     const w = data.wishlist[i];
     const isBatt = /batter|\b\d+(\.\d+)?\s*ah\b/i.test(w.name||"");
-    const base = { id:uuid(), name:w.name, model:"", serial:"", v:w.v||defaultSystem(), date:todayISO(),
+    const base = { id:uuid(), name:w.name, model:"", serial:"", v:w.v||(isBatt?defaultSystem():""), date:todayISO(),
       price:(w.price===""||w.price==null)?"":Number(w.price), warranty_years:DEFAULT_WARRANTY,
       mfg:"", notes:w.notes||"", receipt:null, manual:null };
     const item = isBatt
