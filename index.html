@@ -820,6 +820,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
     <div class="sel-wrap">
       <select id="sort">
         <option value="name">Name A–Z</option>
+        <option value="category" hidden>Category</option>
         <option value="voltage">Battery system</option>
         <option value="capacity" hidden>Capacity (high–low)</option>
         <option value="priority" hidden>Priority (high–low)</option>
@@ -866,7 +867,8 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
   function fmtDate(d){ if(!d) return "—"; const [y,m,da]=d.split("-"); const dt=new Date(y,m-1,da); return isNaN(dt)?"—":dt.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
 
   /* ---------- config ---------- */
-  const APP_VERSION = "2026-11-20";
+  const APP_VERSION = "2026-11-23";
+  const DEFAULT_CATEGORIES = ["Power tools","Hand tools","Air tools","Outdoor","Measuring & layout","Accessories"];
   const STORAGE_KEY = "greenworks_tracker_data";
   const THEME_KEY   = "gw-theme";
   const DEFAULT_WARRANTY = 4;         // Greenworks consumer tools & batteries ≈ 4yr
@@ -1185,7 +1187,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
 
   function filterSort(list){
     const q = ui.q.trim().toLowerCase();
-    let r = list.filter(x => !q || ((x.name||"")+" "+(x.model||"")+" "+(x.serial||"")+" "+(x.store||"")+" "+(x.v||"")).toLowerCase().includes(q));
+    let r = list.filter(x => !q || ((x.name||"")+" "+(x.model||"")+" "+(x.serial||"")+" "+(x.store||"")+" "+(x.category||"")+" "+(x.v||"")).toLowerCase().includes(q));
     const wo={green:0,yellow:1,red:2,gray:3}, po={high:0,med:1,low:2};
     const so={
       name:(a,b)=>(a.name||"").localeCompare(b.name||""),
@@ -1226,6 +1228,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
   function renderGrid(isBatt){
     const list = filterSort(dataFor(isBatt?"batteries":"tools"));
     if(!list.length) return emptyHTML(isBatt?"batteries":"tools");
+    if(ui.sort==="category" && !isBatt) return renderGroupedCat(list);
     if(ui.sort==="voltage") return renderGrouped(list, isBatt);
     if(ui.sort==="capacity") return renderGroupedC(list, isBatt);
     if(ui.sort==="warranty") return renderGroupedW(list, isBatt);
@@ -1273,6 +1276,29 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
           <span class="vmeta"><span>${isBatt?'Batteries':'Tools'} <b>${items.length}</b></span><span>Invested <b>${money(total)}</b></span></span>
         </div>
         <div class="grid">${items.map(x=>cardHTML(x,isBatt,gi++)).join("")}</div>
+      </section>`;
+    });
+    return html;
+  }
+  function renderGroupedCat(list){
+    const cats=[...new Set(list.map(x=>(x.category||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+    const order=cats.concat([""]);   // uncategorized last
+    let gi=0, html="";
+    order.forEach(cat=>{
+      const items=list.filter(x=>((x.category||"").trim())===cat).sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+      if(!items.length) return;
+      const total=items.reduce((s,x)=>s+(Number(x.price)||0),0);
+      const pct=list.length?Math.round(items.length/list.length*100):0;
+      html+=`<section class="sysgroup">
+        <div class="sysgroup-head ${cat?'cap-head':''}"${cat?'':' style="--c:var(--gray)"'}>
+          <span class="wlabel">${esc(cat||"Uncategorized")}</span>
+          <div class="vmid">
+            <span class="vtier">${cat?'Category':'No category set'}</span>
+            <span class="vchg" title="${pct}% of your tools"><span style="width:${pct}%"></span></span>
+          </div>
+          <span class="vmeta"><span>Tools <b>${items.length}</b></span><span>Invested <b>${money(total)}</b></span></span>
+        </div>
+        <div class="grid">${items.map(x=>cardHTML(x,false,gi++)).join("")}</div>
       </section>`;
     });
     return html;
@@ -1421,10 +1447,13 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
     const warrOpt = $("#sort option[value='warranty']");
     const voltOpt = $("#sort option[value='voltage']");
     const isWishTab = ui.tab==="wishlist";
+    const catOpt = $("#sort option[value='category']");
+    if(catOpt)  catOpt.hidden  = ui.tab!=="tools";   // categories are a tools thing
     if(capOpt)  capOpt.hidden  = ui.tab!=="batteries";
     if(prioOpt) prioOpt.hidden = !isWishTab;
     if(warrOpt) warrOpt.hidden = isWishTab;   // wishlist has no warranty
     if(voltOpt) voltOpt.hidden = isWishTab;   // wishlist groups by priority instead
+    if(ui.sort==="category" && ui.tab!=="tools") ui.sort="name";
     if(ui.sort==="capacity" && ui.tab!=="batteries") ui.sort="name";
     if(ui.sort==="priority" && !isWishTab) ui.sort="name";
     if((ui.sort==="warranty"||ui.sort==="voltage") && isWishTab) ui.sort="name";
@@ -1487,7 +1516,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
     const id=uuid();
     if(kind==="wishlist") return {id,name:"",v:"",price:"",priority:"med",url:"",store:"",target:"",notes:"",icon:"tag"};
     if(kind==="battery")  return {id,name:"",model:"",serial:"",v:defaultSystem(),date:"",price:"",warranty_years:DEFAULT_WARRANTY,capacity:"",energy:"",nominal:"",chemistry:"",mfg:"",notes:"",receipt:null,manual:null,icon:"battery"};
-    return {id,name:"",model:"",serial:"",v:defaultSystem(),date:"",price:"",warranty_years:DEFAULT_WARRANTY,mfg:"",compat:"",notes:"",receipt:null,manual:null,maint:[],icon:"tool"};
+    return {id,name:"",model:"",serial:"",v:defaultSystem(),date:"",price:"",warranty_years:DEFAULT_WARRANTY,mfg:"",compat:"",category:"",notes:"",receipt:null,manual:null,maint:[],icon:"tool"};
   }
   // effective file metadata = pending change (if any) else the saved record
   function receiptMeta(){ const p=modalState.pending.receipt; return p!==undefined ? p : (modalState.item.receipt||null); }
@@ -1518,10 +1547,12 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
           <div><label class="flbl">Nominal voltage</label><input class="inp mono" data-k="nominal" value="${esc(item.nominal||'')}" placeholder="e.g. 21.6V (24V MAX)"></div>
           <div><label class="flbl">Chemistry</label><input class="inp" data-k="chemistry" value="${esc(item.chemistry||'')}" placeholder="Li-ion"></div>
           <div class="fg-full"><label class="flbl">Mfg date</label><input class="inp" type="date" data-k="mfg" value="${esc(item.mfg||'')}"></div>`;
+    const catSugg=[...new Set(DEFAULT_CATEGORIES.concat(data.tools.map(t=>(t.category||"").trim()).filter(Boolean)))].sort((a,b)=>a.localeCompare(b));
     const toolSpecs = `
           <div class="fg-sub">Tool specs</div>
+          <div><label class="flbl">Category</label><input class="inp" list="cat-list" data-k="category" value="${esc(item.category||'')}" placeholder="e.g. Hand tools"><datalist id="cat-list">${catSugg.map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
           <div><label class="flbl">Mfg date</label><input class="inp" type="date" data-k="mfg" value="${esc(item.mfg||'')}"></div>
-          <div><label class="flbl">Battery compatibility</label><input class="inp mono" data-k="compat" value="${esc(item.compat||'')}" placeholder="e.g. BAG711 / 29462"></div>`;
+          <div class="fg-full"><label class="flbl">Battery compatibility</label><input class="inp mono" data-k="compat" value="${esc(item.compat||'')}" placeholder="e.g. BAG711 / 29462"></div>`;
 
     const warrantyField = `<div><label class="flbl">Warranty (years)</label><input class="inp mono" type="number" min="0" step="1" data-k="warranty_years" value="${item.warranty_years!=null?item.warranty_years:''}" placeholder="${DEFAULT_WARRANTY}"></div>`;
 
