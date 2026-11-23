@@ -867,7 +867,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
   function fmtDate(d){ if(!d) return "—"; const [y,m,da]=d.split("-"); const dt=new Date(y,m-1,da); return isNaN(dt)?"—":dt.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
 
   /* ---------- config ---------- */
-  const APP_VERSION = "2026-11-23";
+  const APP_VERSION = "2026-11-23.2";
   const DEFAULT_CATEGORIES = ["Power tools","Hand tools","Air tools","Outdoor","Measuring & layout","Accessories"];
   const STORAGE_KEY = "greenworks_tracker_data";
   const THEME_KEY   = "gw-theme";
@@ -1366,6 +1366,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
 
   /* ---------- settings ---------- */
   function renderSettings(){
+    const catsInUse=[...new Set(data.tools.map(t=>(t.category||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
     const cb = data.settings.brand || {};
     const curBrandKey = (cb.preset && (BRANDS[cb.preset] || cb.preset==="custom")) ? cb.preset : "greenworks";
     const items = data.tools.length+data.batteries.length;
@@ -1396,6 +1397,14 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
           </div>
           <div class="row" style="margin-top:12px"><button class="btn primary" id="brand-apply">Apply custom brand</button></div>
         </div>
+      </div>
+      <div class="scard">
+        <h2>Categories</h2>
+        <p>Categories are created just by typing them on a tool. Rename one here to update every tool using it — renaming onto an existing category merges them; renaming to blank un-files the tools.</p>
+        ${catsInUse.length ? catsInUse.map(c=>{
+          const n=data.tools.filter(t=>(t.category||"").trim()===c).length;
+          return `<div class="kv"><span class="k">${esc(c)}</span><span class="v">${n} tool${n>1?"s":""} &nbsp;<button class="btn" style="padding:6px 10px;font-size:var(--t-xs)" data-cat-rename="${esc(c)}">Rename</button></span></div>`;
+        }).join("") : `<p style="color:var(--muted);font-size:var(--t-sm);margin:0">No categories in use yet — set one on a tool and it'll appear here.</p>`}
       </div>
       <div class="scard">
         <h2>Backup &amp; restore</h2>
@@ -1436,6 +1445,22 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
       </div>
       <p style="margin:12px 4px 0;color:var(--muted);font-size:var(--t-2xs);text-transform:uppercase;letter-spacing:.12em">Tool Tracker · v${APP_VERSION}</p>
     </div>`;
+  }
+
+  /* ---------- category rename / merge (updates every tool using it) ---------- */
+  function renameCategory(oldName){
+    const tools=data.tools.filter(t=>(t.category||"").trim()===oldName);
+    if(!tools.length) return;
+    const input=prompt(`Rename category “${oldName}” (${tools.length} tool${tools.length>1?"s":""}).\nUse an existing category name to merge into it, or leave blank to un-file them.`, oldName);
+    if(input===null) return;                       // cancelled
+    const next=input.trim();
+    if(next===oldName) return;
+    const existing=[...new Set(data.tools.map(t=>(t.category||"").trim()).filter(Boolean))];
+    if(next==="" && !confirm(`Remove “${oldName}” from ${tools.length} tool${tools.length>1?"s":""}? They'll show as Uncategorized.`)) return;
+    if(next && existing.includes(next) && !confirm(`“${next}” already exists — merge the ${tools.length} tool${tools.length>1?"s":""} from “${oldName}” into it?`)) return;
+    tools.forEach(t=>{ t.category=next; });
+    save(); render(true);
+    flash(next ? `Category renamed to “${next}” ✓` : "Category removed");
   }
 
   /* ---------- main render ---------- */
@@ -2125,6 +2150,8 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
     if(e.target.closest("#purch-btn")){ $("#purch-file").click(); return; }
     if(e.target.closest("#bkdir-set")){ setBackupFolder(); return; }
     if(e.target.closest("#bkdir-clear")){ clearBackupFolder(); return; }
+    const catBtn=e.target.closest("[data-cat-rename]");
+    if(catBtn){ renameCategory(catBtn.dataset.catRename); return; }
     if(e.target.closest("#brand-apply")){
       const name=($("#brand-name").value||"").trim()||"My Tools";
       data.settings.brand={ preset:"custom", name, accent:$("#brand-color").value, systems:$("#brand-systems").value };
