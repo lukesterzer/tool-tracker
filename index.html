@@ -867,7 +867,7 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
   function fmtDate(d){ if(!d) return "—"; const [y,m,da]=d.split("-"); const dt=new Date(y,m-1,da); return isNaN(dt)?"—":dt.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
 
   /* ---------- config ---------- */
-  const APP_VERSION = "2026-11-23.2";
+  const APP_VERSION = "2026-11-24";
   const DEFAULT_CATEGORIES = ["Power tools","Hand tools","Air tools","Outdoor","Measuring & layout","Accessories"];
   const STORAGE_KEY = "greenworks_tracker_data";
   const THEME_KEY   = "gw-theme";
@@ -986,6 +986,8 @@ header.app::before{ content:""; position:absolute; top:0; left:0; right:0; heigh
       systems:[ {id:"12V",label:"12V CXT",tier:"Compact"},{id:"18V",label:"18V LXT",tier:"Full-size"},{id:"40V",label:"40V XGT",tier:"Max power"} ] },
     ryobi:{ name:"Ryobi", accent:"#8CC63F",
       systems:[ {id:"18V",label:"18V ONE+",tier:"Everyday"},{id:"40V",label:"40V",tier:"Yard & garden"},{id:"80V",label:"80V",tier:"Max power"} ] },
+    ridgid:{ name:"RIDGID", accent:"#F05A28",
+      systems:[ {id:"18V",label:"18V",tier:"All cordless"} ] },   // corded + air tools use AC / no-system
     ego:{ name:"EGO", accent:"#95C11F",
       systems:[ {id:"56V",label:"56V ARC",tier:"All tools"} ] },
     stihl:{ name:"Stihl", accent:"#F37A1F",
